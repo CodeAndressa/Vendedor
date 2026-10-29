@@ -41,3 +41,8 @@ yarn-error.log*
 next-env.d.ts
 !.env.example
 .dados
+
+# skills instaladas por ferramentas (não fazem parte do site)
+.agents
+.claude/skills
+skills-lock.json
