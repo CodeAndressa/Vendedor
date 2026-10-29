@@ -15,9 +15,11 @@ const links = [
   { href: "/#duvidas", label: "Dúvidas" },
 ];
 
-export function Header() {
+// "escuro": a página começa com fundo escuro (home); o topo fica claro até a pessoa rolar.
+export function Header({ escuro = false }: { escuro?: boolean }) {
   const [rolou, setRolou] = useState(false);
   const [aberto, setAberto] = useState(false);
+  const sobreEscuro = escuro && !rolou && !aberto;
 
   useEffect(() => {
     const onScroll = () => setRolou(window.scrollY > 12);
@@ -30,17 +32,18 @@ export function Header() {
     <header
       className={`sticky top-0 z-40 transition-colors duration-300 ${
         rolou || aberto ? "border-b border-line bg-bg/85 backdrop-blur-md" : "border-b border-transparent"
+      } ${sobreEscuro ? "text-white" : ""
       }`}
     >
       <div className="mx-auto flex h-[72px] max-w-[1440px] items-center justify-between gap-4 px-5 md:px-10 xl:px-16">
         <Link href="/" className="font-display text-[26px] leading-none tracking-[-0.01em] whitespace-nowrap">
           {config.marca}
-          <span className="text-brand">.</span>
+          <span className={sobreEscuro ? "text-lime" : "text-brand"}>.</span>
         </Link>
 
-        <nav aria-label="Seções" className="hidden items-center gap-7 text-[15px] text-ink-soft lg:flex">
+        <nav aria-label="Seções" className={`hidden items-center gap-7 text-[15px] lg:flex ${sobreEscuro ? "text-white/70" : "text-ink-soft"}`}>
           {links.map((l) => (
-            <Link key={l.href} href={l.href} className="transition hover:text-ink">
+            <Link key={l.href} href={l.href} className={`transition ${sobreEscuro ? "hover:text-white" : "hover:text-ink"}`}>
               {l.label}
             </Link>
           ))}
@@ -57,7 +60,7 @@ export function Header() {
             onClick={() => setAberto((v) => !v)}
             aria-expanded={aberto}
             aria-label={aberto ? "Fechar menu" : "Abrir menu"}
-            className="grid size-11 place-items-center rounded-full border border-line bg-card lg:hidden"
+            className={`grid size-11 place-items-center rounded-full border lg:hidden ${sobreEscuro ? "border-white/20 bg-white/5" : "border-line bg-card"}`}
           >
             {aberto ? <X className="size-5" /> : <Menu className="size-5" />}
           </button>

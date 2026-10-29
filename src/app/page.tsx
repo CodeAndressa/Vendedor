@@ -30,7 +30,7 @@ export default function Home() {
     <>
       <JsonLd dados={dadosNegocio()} />
       <JsonLd dados={dadosFaq()} />
-      <Header />
+      <Header escuro />
       <main>
         <Hero />
         <PorQue />
