@@ -5,7 +5,7 @@ import { siteUrl } from "@/lib/config";
 // Propostas e telas internas ficam fora.
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: [{ userAgent: "*", allow: "/", disallow: ["/api/", "/proposta", "/prospectar", "/resultado"] }],
+    rules: [{ userAgent: "*", allow: "/", disallow: ["/api/", "/admin", "/proposta", "/prospectar", "/resultado"] }],
     sitemap: `${siteUrl}/sitemap.xml`,
   };
 }

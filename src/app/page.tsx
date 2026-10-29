@@ -11,7 +11,7 @@ import { Miniatura } from "@/components/modelo/miniatura";
 import { SiteModelo } from "@/components/modelo/site-modelo";
 import { Vitrine } from "@/components/modelo/vitrine";
 import { Depoimentos, Portfolio, Sobre } from "@/components/prova";
-import { ComoFunciona, Garantia, Incluso, PorQue, Seguranca } from "@/components/secoes";
+import { BuscaIA, ComoFunciona, Garantia, Incluso, PorQue, Seguranca } from "@/components/secoes";
 import { Assistente } from "@/components/assistente";
 import { modelos } from "@/lib/modelos";
 
@@ -34,6 +34,7 @@ export default function Home() {
       <Header escuro />
       <main>
         <Hero />
+        <BuscaIA />
         <PorQue />
         <Diagnostico />
         <Incluso />

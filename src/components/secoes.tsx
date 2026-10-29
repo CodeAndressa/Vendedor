@@ -13,8 +13,9 @@ import {
   UserCheck,
   Zap,
 } from "lucide-react";
+import { Bot, Braces, MapPin, MessagesSquare, ScanSearch } from "lucide-react";
 import { Reveal } from "./reveal";
-import { Eyebrow, Titulo } from "./ui";
+import { Botao, Eyebrow, Titulo, WhatsAppIcon } from "./ui";
 
 export function Numeros() {
   const itens = [
@@ -218,6 +219,85 @@ export function Seguranca() {
               </div>
             </Reveal>
           ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// Dados com fonte conferida em 29/10/2026. Ao atualizar, mantenha a fonte e o ano ao lado do número.
+const dadosIA = [
+  { numero: "1 bi", texto: "de pessoas por mês já usam o Modo IA da busca do Google", fonte: "Google, 2º tri/2026" },
+  { numero: "8%", texto: "clicam em algum link quando o Google mostra um resumo de IA (sem o resumo, são 15%)", fonte: "Pew Research, 2025 (EUA)" },
+  { numero: "6% → 45%", texto: "dos consumidores usam IA para achar negócios locais, em apenas um ano", fonte: "BrightLocal, 2026 (EUA)" },
+];
+
+export function BuscaIA() {
+  const entregas = [
+    { icone: ScanSearch, texto: "Site rápido, com endereço, horário, serviços e preços escritos para pessoas e IAs entenderem" },
+    { icone: Braces, texto: "Dados estruturados (schema.org) dizendo às buscas exatamente o que é o seu negócio e onde fica" },
+    { icone: MapPin, texto: "Perfil da Empresa no Google e no Bing revisados, com nome, endereço e telefone iguais em todo lugar" },
+    { icone: MessagesSquare, texto: "Páginas que respondem às perguntas que seus clientes fazem de verdade" },
+    { icone: Bot, texto: "Robôs do Google, do ChatGPT e do Perplexity liberados para ler o seu site" },
+  ];
+  return (
+    <section id="busca-ia" className="relative overflow-hidden py-24 md:py-32">
+      <div className="mx-auto max-w-[1440px] px-5 md:px-10 xl:px-16">
+        <div className="grid gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-20">
+          <Reveal>
+            <Eyebrow>A busca mudou</Eyebrow>
+            <Titulo>
+              Seu cliente agora pergunta para a IA. <em>Ela consegue achar você?</em>
+            </Titulo>
+            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-ink-soft">
+              Antes, bastava aparecer no Google. Hoje muita gente pergunta direto ao ChatGPT, ao Gemini ou ao Google com
+              IA: “qual a melhor hamburgueria aqui perto?”, “tem dentista que atende sábado?”. A resposta vem pronta, com
+              poucos nomes, e muita gente nem clica nos links. <strong className="text-ink">A IA só recomenda quem ela
+              consegue encontrar e entender.</strong>
+            </p>
+
+            <dl className="mt-10 grid gap-px overflow-hidden rounded-[24px] border border-line bg-line sm:grid-cols-3">
+              {dadosIA.map((d) => (
+                <div key={d.numero} className="flex flex-col bg-card p-6">
+                  <dt className="font-display text-[clamp(1.75rem,2.4vw,2.4rem)] tracking-[-0.03em] whitespace-nowrap text-forest">{d.numero}</dt>
+                  <dd className="mt-3 flex-1 text-[14px] leading-snug text-ink-soft">{d.texto}</dd>
+                  <dd className="mt-4 text-[11px] tracking-wide text-ink-soft/70 uppercase">{d.fonte}</dd>
+                </div>
+              ))}
+            </dl>
+          </Reveal>
+
+          <Reveal delay={0.1}>
+            <div className="relative h-full overflow-hidden rounded-[28px] bg-forest p-8 text-white md:p-10">
+              <div aria-hidden className="pointer-events-none absolute -top-24 -right-24 size-72 rounded-full bg-[radial-gradient(circle,rgba(217,194,142,0.22),transparent_70%)]" />
+              <div className="relative">
+                <span className="text-[11px] font-medium tracking-[0.22em] text-lime uppercase">Em todo site que eu entrego</span>
+                <h3 className="mt-4 font-display text-3xl leading-tight tracking-[-0.03em]">Pronto para ser encontrado pelas pessoas e pelas IAs</h3>
+                <ul className="mt-7 grid gap-4">
+                  {entregas.map(({ icone: Icone, texto }) => (
+                    <li key={texto} className="flex gap-3.5 text-[15px] leading-snug text-white/80">
+                      <span className="grid size-8 shrink-0 place-items-center rounded-full bg-white/[0.06] text-lime">
+                        <Icone className="size-4" strokeWidth={1.75} />
+                      </span>
+                      {texto}
+                    </li>
+                  ))}
+                </ul>
+                <Botao
+                  mensagem="Oi! Quero a análise grátis: como a IA enxerga o meu negócio hoje?"
+                  variante="lima"
+                  className="mt-9 w-full shadow-[0_0_0_1px_rgba(217,194,142,0.4),0_10px_40px_-8px_rgba(217,194,142,0.5)] sm:w-auto"
+                >
+                  <WhatsAppIcon /> Ver como a IA enxerga meu negócio
+                </Botao>
+                <p className="mt-3 text-xs text-white/50">Análise grátis: pergunto às IAs pelo seu serviço na sua cidade e te mostro o resultado.</p>
+                <p className="mt-6 border-t border-white/10 pt-5 text-xs leading-relaxed text-white/45">
+                  Nenhuma IA vende lugar na resposta e ninguém pode garantir que você será citado. O que dá para fazer é tirar os
+                  obstáculos e dar a ela informação clara e confiável sobre o seu negócio.
+                </p>
+              </div>
+            </div>
+          </Reveal>
         </div>
       </div>
     </section>

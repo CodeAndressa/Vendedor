@@ -9,6 +9,7 @@ import { Logo } from "./logo";
 import { Botao, WhatsAppIcon } from "./ui";
 
 const links = [
+  { href: "/#busca-ia", label: "Busca com IA" },
   { href: "/modelos", label: "Modelos" },
   { href: "/#orcamento", label: "Preços" },
   { href: "/#mensal", label: "Planos mensais" },

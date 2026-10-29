@@ -53,8 +53,8 @@ export const planosMensais = [
     nome: "Crescimento",
     valor: precosMensais.crescimento,
     destaque: true,
-    resumo: "Para aparecer mais no Google a cada mês.",
-    itens: ["Tudo do Cuidado", "Perfil da Empresa no Google atualizado com posts", "2 artigos por mês no blog", "Relatório mensal de visitas e contatos"],
+    resumo: "Para aparecer mais no Google e nas buscas com IA a cada mês.",
+    itens: ["Tudo do Cuidado", "Perfil da Empresa no Google atualizado com posts", "Teste mensal: como ChatGPT, Gemini e Google com IA respondem sobre você", "2 artigos por mês no blog", "Relatório mensal de visitas e contatos"],
   },
   {
     id: "anuncios",
