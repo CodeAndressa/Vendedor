@@ -16,6 +16,8 @@ Feito em Next.js, Tailwind CSS e Motion (animações).
 | Robô que acha empresas sem site no Google | `/prospectar` (só com a sua chave) |
 | Planos mensais com assinatura no Asaas | `/#mensal` |
 | Painel de leads, propostas e pagamentos (com a sua chave) | `/admin` |
+| Agente de IA (Groq) que tira dúvidas e leva para o WhatsApp | botão no canto da tela |
+| Seção "a busca mudou" com chamada para análise grátis de IA | `/#busca-ia` |
 | Site por assinatura: 12x sem entrada, com aviso de atraso | proposta e calculadora |
 | Assistente com IA no site (item adicional) | calculadora e propostas |
 | Resumo para buscas com IA | `/llms.txt` |
@@ -53,6 +55,8 @@ Restaurantes podem ter `cardapio` e `local`. A demonstração e o cartão da gal
 | `PROPOSTA_SEGREDO` | Assina as propostas. Qualquer texto longo e aleatório. | Sim |
 | `ADMIN_CHAVE` | Sua senha do painel `/admin`, do gerador de propostas e do robô. | Sim |
 | `LEAD_WEBHOOK_URL` | Opcional: também manda cada aviso para uma planilha, n8n ou CRM. | Não |
+| `GROQ_API_KEY` | Chave do Groq para o agente de IA do site (o chat no canto da tela). | Para o chat |
+| `GROQ_MODEL` | Modelo do Groq. Padrão: `openai/gpt-oss-120b`. | Não |
 | `RESEND_API_KEY` | Chave do Resend para receber cada lead e pagamento por e-mail. | Recomendado |
 | `AVISO_EMAIL_PARA` | Seu e-mail (pode ser mais de um, separados por vírgula). | Com o Resend |
 | `AVISO_EMAIL_DE` | Remetente de um domínio verificado no Resend, ex.: `Site <avisos@seudominio.com.br>`. | Quando tiver domínio |
