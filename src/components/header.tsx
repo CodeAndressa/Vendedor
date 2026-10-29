@@ -2,25 +2,17 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { AnimatePresence, motion } from "motion/react";
-import { Menu, Sparkles, X } from "lucide-react";
-import { config } from "@/lib/config";
+import { Sparkles } from "lucide-react";
+import { config, linkWhatsApp } from "@/lib/config";
+import { Dock } from "./dock";
 import { Logo } from "./logo";
 import { Botao, WhatsAppIcon } from "./ui";
 
-const links = [
-  { href: "/modelos", label: "Modelos" },
-  { href: "/#orcamento", label: "Preços" },
-  { href: "/#mensal", label: "Planos mensais" },
-  { href: "/#portfolio", label: "Portfólio" },
-  { href: "/#duvidas", label: "Dúvidas" },
-];
-
+// Topo enxuto (logo, análise de IA e WhatsApp). A navegação fica no menu flutuante (Dock), embaixo.
 // "escuro": a página começa com fundo escuro (home); o topo fica claro até a pessoa rolar.
 export function Header({ escuro = false }: { escuro?: boolean }) {
   const [rolou, setRolou] = useState(false);
-  const [aberto, setAberto] = useState(false);
-  const sobreEscuro = escuro && !rolou && !aberto;
+  const sobreEscuro = escuro && !rolou;
 
   useEffect(() => {
     const onScroll = () => setRolou(window.scrollY > 12);
@@ -30,81 +22,43 @@ export function Header({ escuro = false }: { escuro?: boolean }) {
   }, []);
 
   return (
-    <header
-      className={`sticky top-0 z-40 transition-colors duration-300 ${
-        rolou || aberto ? "border-b border-line bg-bg/85 backdrop-blur-md" : "border-b border-transparent"
-      } ${sobreEscuro ? "text-white" : ""
-      }`}
-    >
-      <div className="mx-auto flex h-[72px] max-w-[1440px] items-center justify-between gap-4 px-5 md:px-10 xl:px-16">
-        <Link href="/" aria-label={`${config.marca}, página inicial`}>
-          <Logo claro={sobreEscuro} digitar />
-        </Link>
-
-        <nav aria-label="Seções" className={`hidden items-center gap-7 text-[15px] lg:flex ${sobreEscuro ? "text-white/70" : "text-ink-soft"}`}>
-          <Link
-            href="/analise-ia"
-            className="brilho inline-flex items-center gap-1.5 rounded-full border border-lime/50 bg-lime/15 px-3.5 py-1.5 font-semibold text-[#B8964F] transition hover:bg-lime/25 data-[escuro=true]:text-lime"
-            data-escuro={sobreEscuro}
-          >
-            <Sparkles className="size-3.5" /> Como a IA te vê?
+    <>
+      <header
+        className={`sticky top-0 z-40 transition-colors duration-300 ${
+          rolou ? "border-b border-line bg-bg/85 backdrop-blur-md" : "border-b border-transparent"
+        } ${sobreEscuro ? "text-white" : ""}`}
+      >
+        <div className="mx-auto flex h-[72px] max-w-[1440px] items-center justify-between gap-4 px-5 md:px-10 xl:px-16">
+          <Link href="/" aria-label={`${config.marca}, página inicial`}>
+            <Logo claro={sobreEscuro} digitar />
           </Link>
-          {links.map((l) => (
-            <Link key={l.href} href={l.href} className={`transition ${sobreEscuro ? "hover:text-white" : "hover:text-ink"}`}>
-              {l.label}
+
+          <div className="flex items-center gap-2.5">
+            <Link
+              href="/analise-ia"
+              data-escuro={sobreEscuro}
+              className="brilho hidden items-center gap-1.5 rounded-full border border-lime/50 bg-lime/15 px-3.5 py-2 text-sm font-semibold text-[#9C7B3C] transition hover:bg-lime/25 data-[escuro=true]:text-lime md:inline-flex"
+            >
+              <Sparkles className="size-3.5" /> Como a IA te vê?
             </Link>
-          ))}
-        </nav>
-
-        <div className="flex items-center gap-2">
-          <span className="hidden sm:block">
-            <Botao mensagem="Oi! Vim pelo seu site e quero um orçamento." className="!min-h-10 !px-5 !py-2 text-sm">
-              <WhatsAppIcon className="size-4" /> Pedir orçamento
-            </Botao>
-          </span>
-          <button
-            type="button"
-            onClick={() => setAberto((v) => !v)}
-            aria-expanded={aberto}
-            aria-label={aberto ? "Fechar menu" : "Abrir menu"}
-            className={`grid size-11 place-items-center rounded-full border lg:hidden ${sobreEscuro ? "border-white/20 bg-white/5" : "border-line bg-card"}`}
-          >
-            {aberto ? <X className="size-5" /> : <Menu className="size-5" />}
-          </button>
+            <span className="hidden sm:block">
+              <Botao mensagem="Oi! Vim pelo seu site e quero um orçamento." className="!min-h-10 !px-5 !py-2 text-sm">
+                <WhatsAppIcon className="size-4" /> Pedir orçamento
+              </Botao>
+            </span>
+            <a
+              href={linkWhatsApp("Oi! Vim pelo seu site e quero um orçamento.")}
+              target="_blank"
+              rel="noopener"
+              aria-label="Pedir orçamento no WhatsApp"
+              className="grid size-11 place-items-center rounded-full bg-brand text-white sm:hidden"
+            >
+              <WhatsAppIcon className="size-5" />
+            </a>
+          </div>
         </div>
-      </div>
-
-      <AnimatePresence>
-        {aberto && (
-          <motion.nav
-            aria-label="Seções"
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden border-t border-line lg:hidden"
-          >
-            <div className="mx-auto flex max-w-[1440px] flex-col px-5 md:px-10 xl:px-16 py-3">
-              <Link
-                href="/analise-ia"
-                onClick={() => setAberto(false)}
-                className="my-2 inline-flex items-center gap-2 rounded-2xl bg-forest px-4 py-3.5 text-lg font-semibold text-lime"
-              >
-                <Sparkles className="size-5" /> Como a IA enxerga meu negócio? (grátis)
-              </Link>
-              {links.map((l) => (
-                <Link
-                  key={l.href}
-                  href={l.href}
-                  onClick={() => setAberto(false)}
-                  className="border-b border-line py-3.5 text-lg font-medium last:border-0"
-                >
-                  {l.label}
-                </Link>
-              ))}
-            </div>
-          </motion.nav>
-        )}
-      </AnimatePresence>
-    </header>
+      </header>
+      <Dock />
+    </>
   );
 }

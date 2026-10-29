@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Check } from "lucide-react";
-import { ChamadaFinal, ContatoFixo, Rodape } from "@/components/final";
+import { ChamadaFinal, Rodape } from "@/components/final";
 import { Header } from "@/components/header";
 import { JsonLd, dadosFaq } from "@/components/json-ld";
 import { Miniatura } from "@/components/modelo/miniatura";
@@ -134,7 +134,6 @@ export default async function PaginaNicho({ params }: PageProps<"/para/[slug]">)
         <ChamadaFinal />
       </main>
       <Rodape />
-      <ContatoFixo />
       <Assistente />
     </>
   );

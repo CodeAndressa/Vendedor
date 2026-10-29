@@ -21,7 +21,7 @@ export function Hero() {
   const anim = (delay: number) => (reduzir ? {} : entrada(delay + espera));
 
   return (
-    <section className="relative -mt-[72px] overflow-hidden bg-forest pt-[72px] text-white">
+    <section id="inicio" className="relative -mt-[72px] overflow-hidden bg-forest pt-[72px] text-white">
       {/* brilhos de fundo e pontilhado fino */}
       <div aria-hidden className="pointer-events-none absolute -top-40 left-[-10%] size-[720px] rounded-full bg-[radial-gradient(circle,rgba(23,120,74,0.35)_0%,transparent_65%)]" />
       <div aria-hidden className="pointer-events-none absolute right-[-5%] bottom-[-30%] size-[640px] rounded-full bg-[radial-gradient(circle,rgba(217,194,142,0.14)_0%,transparent_65%)]" />

@@ -1,8 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
-import { AnimatePresence, motion } from "motion/react";
 import { config, linkWhatsApp } from "@/lib/config";
 import { nichos } from "@/lib/nichos";
 import { Reveal } from "./reveal";
@@ -68,7 +66,7 @@ const colunas = [
 
 export function Rodape() {
   return (
-    <footer className="overflow-hidden bg-forest pt-16 pb-28 text-white md:pb-10">
+    <footer className="overflow-hidden bg-forest pt-16 pb-32 text-white">
       <div className="mx-auto grid max-w-[1440px] gap-12 px-5 md:px-10 xl:px-16 md:grid-cols-[1.4fr_1fr_1fr_1.2fr]">
         <div>
           <Logo claro />
@@ -145,50 +143,3 @@ export function Rodape() {
 }
 
 // Botão flutuante no desktop e barra fixa no celular, que aparecem depois do topo.
-export function ContatoFixo() {
-  const [visivel, setVisivel] = useState(false);
-  useEffect(() => {
-    const onScroll = () => setVisivel(window.scrollY > 600);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  const href = linkWhatsApp("Oi! Vim pelo seu site.");
-  return (
-    <AnimatePresence>
-      {visivel && (
-        <>
-          <motion.div
-            initial={{ y: 100 }}
-            animate={{ y: 0 }}
-            exit={{ y: 100 }}
-            className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-bg/90 p-3 backdrop-blur-md md:hidden"
-          >
-            <a
-              href={href}
-              target="_blank"
-              rel="noopener"
-              className="flex min-h-12 items-center justify-center gap-2.5 rounded-full bg-brand font-semibold text-white"
-            >
-              <WhatsAppIcon /> Quero meu site por R$ 997
-            </a>
-          </motion.div>
-          <motion.a
-            href={href}
-            target="_blank"
-            rel="noopener"
-            aria-label="Falar no WhatsApp"
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0, opacity: 0 }}
-            whileHover={{ scale: 1.08 }}
-            className="fixed right-6 bottom-24 z-40 hidden size-14 place-items-center rounded-full bg-wa text-white shadow-[0_14px_30px_-10px_rgba(37,211,102,0.8)] md:grid"
-          >
-            <WhatsAppIcon className="size-8" />
-          </motion.a>
-        </>
-      )}
-    </AnimatePresence>
-  );
-}

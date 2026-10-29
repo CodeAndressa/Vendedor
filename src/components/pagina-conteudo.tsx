@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { Check } from "lucide-react";
 import { Assistente } from "./assistente";
 import { Efeitos } from "./efeitos";
-import { ChamadaFinal, ContatoFixo, Rodape } from "./final";
+import { ChamadaFinal, Rodape } from "./final";
 import { Header } from "./header";
 import { JsonLd, dadosFaq, dadosNegocio, dadosPessoa } from "./json-ld";
 import { Eyebrow, Titulo } from "./ui";
@@ -82,7 +82,6 @@ export function PaginaConteudo({
         <ChamadaFinal />
       </main>
       <Rodape />
-      <ContatoFixo />
       <Assistente />
     </>
   );

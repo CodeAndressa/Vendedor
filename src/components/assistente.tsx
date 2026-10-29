@@ -89,7 +89,7 @@ export function Assistente() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.97 }}
             transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-x-3 bottom-24 z-[60] flex max-h-[min(620px,calc(100svh-120px))] flex-col overflow-hidden rounded-[24px] border border-white/10 bg-card shadow-[0_40px_90px_-30px_rgba(8,30,20,0.6)] sm:inset-x-auto sm:right-6 sm:w-[390px] md:bottom-28"
+            className="fixed inset-x-3 bottom-[156px] z-[60] flex max-h-[min(620px,calc(100svh-120px))] flex-col overflow-hidden rounded-[24px] border border-white/10 bg-card shadow-[0_40px_90px_-30px_rgba(8,30,20,0.6)] sm:inset-x-auto sm:right-6 sm:w-[390px] lg:bottom-24"
           >
             <header className="relative flex items-center gap-3 bg-forest px-5 py-4 text-white">
               <div aria-hidden className="pointer-events-none absolute -top-16 -right-10 size-40 rounded-full bg-[radial-gradient(circle,rgba(217,194,142,0.25),transparent_70%)]" />
@@ -198,7 +198,7 @@ export function Assistente() {
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 1, type: "spring", stiffness: 260, damping: 20 }}
         whileHover={{ scale: 1.05 }}
-        className="fixed right-4 bottom-20 z-[60] flex h-14 items-center gap-2 rounded-full bg-forest pr-5 pl-2 text-white shadow-[0_0_0_1px_rgba(217,194,142,0.35),0_18px_40px_-12px_rgba(8,30,20,0.7)] md:right-6 md:bottom-6"
+        className="fixed right-4 bottom-[88px] z-[60] flex h-14 items-center gap-2 rounded-full bg-forest pr-5 pl-2 text-white shadow-[0_0_0_1px_rgba(217,194,142,0.35),0_18px_40px_-12px_rgba(8,30,20,0.7)] lg:right-6 lg:bottom-6"
       >
         {aberto ? (
           <span className="grid size-10 place-items-center"><X className="size-5" /></span>

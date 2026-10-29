@@ -3,7 +3,7 @@ import { Calculadora } from "@/components/calculadora";
 import { JsonLd, dadosFaq, dadosNegocio, dadosPessoa, dadosSite } from "@/components/json-ld";
 import { Diagnostico } from "@/components/diagnostico";
 import { Duvidas } from "@/components/faq";
-import { ChamadaFinal, ContatoFixo, Rodape } from "@/components/final";
+import { ChamadaFinal, Rodape } from "@/components/final";
 import { Header } from "@/components/header";
 import { Hero } from "@/components/hero";
 import { PlanosMensais } from "@/components/planos-mensais";
@@ -57,7 +57,6 @@ export default function Home() {
         <ChamadaFinal />
       </main>
       <Rodape />
-      <ContatoFixo />
       <Assistente />
     </>
   );

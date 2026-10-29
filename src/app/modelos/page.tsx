@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ChamadaFinal, ContatoFixo, Rodape } from "@/components/final";
+import { ChamadaFinal, Rodape } from "@/components/final";
 import { Header } from "@/components/header";
 import { Galeria } from "@/components/modelo/galeria";
 import { Miniatura } from "@/components/modelo/miniatura";
@@ -42,7 +42,6 @@ export default function PaginaModelos() {
       </main>
       <ChamadaFinal />
       <Rodape />
-      <ContatoFixo />
     </>
   );
 }
