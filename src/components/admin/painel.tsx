@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ChevronDown, ExternalLink, Loader2, LogOut, RefreshCw, Search, TriangleAlert } from "lucide-react";
 import { reais } from "@/lib/config";
 import { CampoChave, useChaveAdmin } from "./chave";
+import { Faturamento, SitesProducao, VisaoGeral, VisibilidadeIA } from "./central";
 import { WhatsAppIcon } from "../ui";
 
 type Situacao = "novo" | "conversando" | "proposta" | "fechou" | "perdido";
@@ -44,6 +45,16 @@ const nomesEventoAsaas: Record<string, string> = {
   SUBSCRIPTION_INACTIVATED: "Assinatura inativada",
 };
 
+
+const secoes = [
+  { id: "geral", nome: "Visão geral" },
+  { id: "leads", nome: "Leads" },
+  { id: "faturamento", nome: "Faturamento" },
+  { id: "sites", nome: "Sites" },
+  { id: "ia", nome: "IA" },
+] as const;
+type Secao = (typeof secoes)[number]["id"];
+
 const texto = (v: unknown) => (typeof v === "string" ? v : typeof v === "number" ? String(v) : "");
 
 function quando(iso: string) {
@@ -65,6 +76,7 @@ export function PainelAdmin() {
   const [aba, setAba] = useState<(typeof abas)[number]["id"]>("lead");
   const [busca, setBusca] = useState("");
   const [aberto, setAberto] = useState<string | null>(null);
+  const [secao, setSecao] = useState<Secao>("geral");
 
   const carregar = useCallback(
     async (chave: string, lembrar = false) => {
@@ -162,7 +174,7 @@ export function PainelAdmin() {
     <main className="min-h-svh bg-bg pb-20">
       <header className="sticky top-0 z-10 border-b border-line bg-bg/85 backdrop-blur">
         <div className="mx-auto flex max-w-[1440px] flex-wrap items-center gap-3 px-5 md:px-10 xl:px-16 py-4">
-          <h1 className="font-display text-xl tracking-tight">Painel</h1>
+          <h1 className="font-display text-xl tracking-tight">Central</h1>
           <nav className="ml-auto flex flex-wrap items-center gap-1 text-sm">
             <Link href="/proposta/nova" className="rounded-full px-3 py-2 hover:bg-bg-alt">Gerar proposta</Link>
             <Link href="/prospectar" className="rounded-full px-3 py-2 hover:bg-bg-alt">Robô de prospecção</Link>
@@ -173,6 +185,18 @@ export function PainelAdmin() {
               <LogOut className="size-4" />
             </button>
           </nav>
+        </div>
+        <div className="mx-auto flex max-w-[1440px] gap-1 overflow-x-auto px-5 pb-3 md:px-10 xl:px-16">
+          {secoes.map((s) => (
+            <button
+              key={s.id}
+              type="button"
+              onClick={() => setSecao(s.id)}
+              className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition ${secao === s.id ? "bg-[#0A4A2B] text-white" : "text-ink-soft hover:bg-bg-alt hover:text-ink"}`}
+            >
+              {s.nome}
+            </button>
+          ))}
         </div>
       </header>
 
@@ -191,6 +215,12 @@ export function PainelAdmin() {
           </div>
         )}
 
+        {secao === "geral" && <VisaoGeral chave={admin.chave} />}
+        {secao === "faturamento" && <Faturamento chave={admin.chave} />}
+        {secao === "sites" && <SitesProducao chave={admin.chave} />}
+        {secao === "ia" && <VisibilidadeIA chave={admin.chave} />}
+        {secao === "leads" && (
+        <>
         <section className="mt-8 grid grid-cols-2 gap-3 lg:grid-cols-4">
           {numeros.map((n) => (
             <div key={n.nome} className="rounded-3xl border border-line bg-card p-5">
@@ -315,6 +345,8 @@ export function PainelAdmin() {
             );
           })}
         </ul>
+        </>
+        )}
       </div>
     </main>
   );

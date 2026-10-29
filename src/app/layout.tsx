@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Bricolage_Grotesque, Fraunces, Inter, Space_Grotesk } from "next/font/google";
 import { IlhaProvider } from "@/components/ilha";
+import { Medidor } from "@/components/medidor";
 import { Rastreamento } from "@/components/rastreamento";
 import { config, siteUrl } from "@/lib/config";
 import "./globals.css";
@@ -57,6 +58,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full font-sans">
         <IlhaProvider>{children}</IlhaProvider>
         <Rastreamento />
+        <Medidor />
       </body>
     </html>
   );

@@ -35,6 +35,13 @@ export default function Privacidade() {
           Se você aceitar cookies, o site usa ferramentas do Google e da Meta (Facebook e Instagram) para medir visitas e
           melhorar os anúncios. Você pode recusar no aviso de cookies; o site continua funcionando normalmente.
         </p>
+        <h2>Estatísticas anônimas</h2>
+        <p>
+          O próprio site conta, de forma anônima, quantas visitas cada página recebe, de onde as pessoas vieram (por exemplo,
+          Google ou ChatGPT), quanto tempo ficaram e quanto rolaram. Para contar visitantes únicos, o navegador guarda um número
+          aleatório que não identifica você. Nenhum nome, telefone, endereço IP ou dado pessoal entra nessas estatísticas, e
+          elas só aparecem somadas.
+        </p>
         <h2>Seus direitos</h2>
         <p>
           Você pode pedir a qualquer momento para ver, corrigir ou apagar seus dados. É só mandar uma mensagem para o

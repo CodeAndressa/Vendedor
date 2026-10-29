@@ -22,7 +22,7 @@ const normalizar = (s: string) =>
   s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9 ]/g, " ").replace(/\s+/g, " ").trim();
 
 // Considera citado se as palavras marcantes do nome aparecem num dos indicados.
-function citado(nome: string, indicados: string[]) {
+export function citado(nome: string, indicados: string[]) {
   const genericas = new Set(["de", "da", "do", "das", "dos", "e", "a", "o", "the", "ltda", "me", "eireli"]);
   const palavras = normalizar(nome).split(" ").filter((p) => p.length > 2 && !genericas.has(p));
   if (!palavras.length) return false;
@@ -33,7 +33,7 @@ function citado(nome: string, indicados: string[]) {
   });
 }
 
-async function perguntarJSON(sistema: string, pergunta: string): Promise<Record<string, unknown>> {
+export async function perguntarJSON(sistema: string, pergunta: string): Promise<Record<string, unknown>> {
   const base = (process.env.GROQ_BASE_URL || "https://api.groq.com/openai/v1").replace(/\/$/, "");
   const r = await fetch(`${base}/chat/completions`, {
     method: "POST",

@@ -10,7 +10,7 @@ function base() {
 
 export const asaasConfigurado = () => Boolean(process.env.ASAAS_API_KEY);
 
-async function asaas<T>(caminho: string, metodo: "GET" | "POST" = "GET", corpo?: object): Promise<T> {
+export async function asaas<T>(caminho: string, metodo: "GET" | "POST" = "GET", corpo?: object): Promise<T> {
   const r = await fetch(`${base()}${caminho}`, {
     method: metodo,
     headers: {

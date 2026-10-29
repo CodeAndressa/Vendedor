@@ -83,3 +83,33 @@ export async function avisarPorEmail(e: Evento) {
     console.error("Falha ao enviar e-mail pelo Resend", err);
   }
 }
+
+// E-mail simples para você (monitor de sites, teste semanal de IA). Sem Resend configurado, só registra no log.
+export async function enviarEmail(assunto: string, linhas: string[]) {
+  if (!emailConfigurado()) {
+    console.log("Aviso por e-mail (Resend não configurado):", assunto, linhas);
+    return;
+  }
+  const html = `<div style="font-family:Inter,Arial,sans-serif;max-width:560px;margin:auto;color:#0d1a14">
+  <p style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#14804a;margin:0 0 8px">${escapar(config.marca)}</p>
+  <h1 style="font-size:22px;margin:0 0 16px">${escapar(assunto)}</h1>
+  ${linhas.map((l) => `<p style="margin:0 0 8px;font-size:15px">${escapar(l)}</p>`).join("")}
+  <p style="margin:24px 0 0"><a href="${siteUrl}/admin" style="color:#14804a">Abrir painel</a></p>
+</div>`;
+  try {
+    const r = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        from: process.env.AVISO_EMAIL_DE || `${config.marca} <onboarding@resend.dev>`,
+        to: process.env.AVISO_EMAIL_PARA!.split(",").map((s) => s.trim()),
+        subject: assunto,
+        html,
+      }),
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!r.ok) console.error("Resend recusou o e-mail", r.status, await r.text().catch(() => ""));
+  } catch (err) {
+    console.error("Falha ao enviar e-mail pelo Resend", err);
+  }
+}

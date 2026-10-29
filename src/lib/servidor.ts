@@ -2,6 +2,7 @@ import "server-only";
 import { createHmac, randomUUID, timingSafeEqual } from "node:crypto";
 import { guardar, ondeGuarda, type Evento } from "./armazem";
 import { avisarPorEmail } from "./email";
+import { somar } from "./metricas";
 import { siteUrl } from "./config";
 import { codificar, type Proposta } from "./proposta";
 
@@ -42,7 +43,8 @@ export function chaveAdminConfere(chave: string | null) {
 export async function notificar(dados: Record<string, unknown> & { tipo: string }) {
   const evento: Evento = { id: randomUUID(), recebido_em: new Date().toISOString(), situacao: "novo", ...dados };
   const webhook = process.env.LEAD_WEBHOOK_URL;
-  const tarefas: Promise<unknown>[] = [guardar(evento), avisarPorEmail(evento)];
+  const contador = dados.tipo === "pagamento" ? `asaas|${String(dados.evento ?? "")}` : `evento|${dados.tipo}`;
+  const tarefas: Promise<unknown>[] = [guardar(evento), avisarPorEmail(evento), somar({ [contador]: 1 })];
   if (webhook)
     tarefas.push(
       fetch(webhook, {

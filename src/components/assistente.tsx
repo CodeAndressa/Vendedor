@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { ArrowUp, Sparkles, X } from "lucide-react";
 import { config, linkWhatsApp } from "@/lib/config";
 import { LogoSimbolo } from "./logo";
+import { enviarMetrica } from "./medidor";
 import { WhatsAppIcon } from "./ui";
 
 type Mensagem = { role: "user" | "assistant"; content: string };
@@ -191,7 +192,10 @@ export function Assistente() {
 
       <motion.button
         type="button"
-        onClick={() => setAberto((v) => !v)}
+        onClick={() => {
+          if (!aberto) enviarMetrica({ t: "evento", n: "chat" });
+          setAberto((v) => !v);
+        }}
         aria-label={aberto ? "Fechar assistente" : "Abrir assistente com IA"}
         aria-expanded={aberto}
         initial={{ scale: 0, opacity: 0 }}
