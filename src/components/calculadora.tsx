@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { animate, motion, useMotionValue, useReducedMotion, useTransform } from "motion/react";
 import { Bot, CalendarClock, Check, LayoutTemplate, Lock, Newspaper, PanelsTopLeft, PenTool, ShoppingBag } from "lucide-react";
 import * as catalogo from "@/lib/catalogo";
 import { assinaturaSite, linkWhatsApp, precos, reais } from "@/lib/config";
 import { modelos } from "@/lib/modelos";
+import { lerOrigem } from "@/lib/rastreio";
 import { rolarAte } from "./efeitos";
 import { useIlha } from "./ilha";
 import { Checkout } from "./checkout";
@@ -78,6 +79,8 @@ export function Calculadora() {
   const [modelo, setModelo] = useState("");
   const [nome, setNome] = useState("");
   const [negocio, setNegocio] = useState("");
+  const [whatsapp, setWhatsapp] = useState("");
+  const registrado = useRef(""); // WhatsApp já registrado como lead nesta visita
   const { avisar } = useIlha();
 
   const total = somar(escolhidos);
@@ -109,6 +112,36 @@ export function Calculadora() {
   ]
     .filter((l) => l !== null)
     .join("\n");
+
+  // Vira lead no painel e no kanban (com a proposta da escolha): quando a pessoa deixa nome e WhatsApp,
+  // ou quando clica para conversar no WhatsApp. sendBeacon não segura a navegação e chega mesmo se a aba trocar.
+  const digitos = whatsapp.replace(/\D/g, "");
+  const contatoValido = nome.trim().length >= 2 && (digitos.length === 10 || digitos.length === 11);
+  const registrarLead = (origem: "calculadora" | "calculadora-whatsapp") => {
+    if (contatoValido && registrado.current === digitos) return;
+    const itens = [baseEscolhida.titulo, ...extras.filter((e) => escolhidos.includes(e.id)).map((e) => e.titulo)];
+    const dados = JSON.stringify({
+      origem: contatoValido ? "calculadora" : origem,
+      nome: nome.trim(),
+      negocio: negocio.trim(),
+      ...(contatoValido ? { whatsapp: digitos, consentimento: true } : {}),
+      respostas: { itens: itens.join(" + "), total: reais(total), modelo: modeloEscolhido?.nome ?? "" },
+      proposta: { negocio: negocio.trim() || nome.trim(), modelo, base, extras: escolhidos },
+      utm: lerOrigem(),
+      pagina: location.href,
+    });
+    if (contatoValido) registrado.current = digitos;
+    try {
+      if (!navigator.sendBeacon?.("/api/lead", new Blob([dados], { type: "application/json" })))
+        void fetch("/api/lead", { method: "POST", headers: { "Content-Type": "application/json" }, body: dados, keepalive: true });
+    } catch {
+      // aviso é extra: o WhatsApp abre de qualquer jeito
+    }
+    if (contatoValido && origem === "calculadora") avisar("Recebi seu contato", "Te chamo no WhatsApp com a proposta");
+  };
+  const aoSairDoContato = () => {
+    if (contatoValido) registrarLead("calculadora");
+  };
 
   return (
     <section id="orcamento" className="bg-bg-alt py-24 md:py-32">
@@ -249,7 +282,7 @@ export function Calculadora() {
 
               <fieldset className="mt-9">
                 <legend className="mb-4 text-sm font-semibold tracking-wide text-ink-soft uppercase">
-                  3. Sobre você (opcional)
+                  3. Sobre você (para eu te mandar a proposta)
                 </legend>
                 <div className="grid gap-3 sm:grid-cols-2">
                   <select
@@ -268,6 +301,8 @@ export function Calculadora() {
                   <input
                     value={nome}
                     onChange={(e) => setNome(e.target.value)}
+                    onBlur={aoSairDoContato}
+                    autoComplete="name"
                     placeholder="Seu nome"
                     aria-label="Seu nome"
                     className="min-h-12 rounded-xl border-2 border-line bg-bg px-4 outline-none transition focus:border-brand"
@@ -279,7 +314,25 @@ export function Calculadora() {
                     aria-label="Seu negócio"
                     className="min-h-12 rounded-xl border-2 border-line bg-bg px-4 outline-none transition focus:border-brand"
                   />
+                  <input
+                    value={whatsapp}
+                    onChange={(e) => setWhatsapp(e.target.value)}
+                    onBlur={aoSairDoContato}
+                    placeholder="Seu WhatsApp com DDD"
+                    aria-label="Seu WhatsApp com DDD"
+                    type="tel"
+                    inputMode="tel"
+                    autoComplete="tel"
+                    className="min-h-12 rounded-xl border-2 border-line bg-bg px-4 outline-none transition focus:border-brand sm:col-span-2"
+                  />
                 </div>
+                <p className="mt-3 text-sm text-ink-soft">
+                  Deixando nome e WhatsApp, eu te mando a proposta com esse orçamento. Seus dados são usados só para isso:{" "}
+                  <a href="/privacidade" className="underline underline-offset-2">
+                    política de privacidade
+                  </a>
+                  .
+                </p>
               </fieldset>
             </div>
 
@@ -347,6 +400,7 @@ export function Calculadora() {
                 href={linkWhatsApp(mensagem)}
                 target="_blank"
                 rel="noopener"
+                onClick={() => registrarLead("calculadora-whatsapp")}
                 className="relative mt-2.5 inline-flex min-h-12 items-center justify-center gap-2.5 rounded-full px-6 text-[15px] font-semibold text-white/80 transition hover:text-white"
               >
                 <WhatsAppIcon className="size-4" /> Prefiro conversar antes no WhatsApp

@@ -92,7 +92,12 @@ export async function avisarPorEmail(e: Evento) {
   const linhas = Object.entries(rotulos)
     .filter(([campo]) => e[campo] !== undefined && e[campo] !== "")
     .map(([campo, rotulo]) => linhaTabela(rotulo, valorLegivel(campo, e[campo])))
-    .join("");
+    .join("") +
+    // respostas do formulário (itens e total da calculadora, nota da análise, perguntas do diagnóstico)
+    Object.entries(e.respostas && typeof e.respostas === "object" ? (e.respostas as Record<string, unknown>) : {})
+      .filter(([, v]) => v !== undefined && v !== "")
+      .map(([campo, v]) => linhaTabela(escapar(campo.charAt(0).toUpperCase() + campo.slice(1)), valorLegivel(campo, v)))
+      .join("");
   const whats = typeof e.whatsapp === "string" && e.whatsapp ? `https://wa.me/${e.whatsapp.replace(/\D/g, "")}` : "";
   const assunto = `${titulo}${quem ? `: ${quem}` : ""}`;
   await enviarPeloResend({

@@ -26,11 +26,14 @@ export async function POST(request: Request) {
   // Campo escondido: só robô preenche.
   if (texto(corpo.site)) return Response.json({ ok: true });
 
-  const nome = texto(corpo.nome, 80);
+  // "Prefiro conversar no WhatsApp" da calculadora: a própria pessoa abre a conversa com você, então não há
+  // WhatsApp nem consentimento a pedir aqui; o aviso serve para o orçamento entrar no painel e no kanban.
+  const daCalculadora = corpo.origem === "calculadora-whatsapp";
+  const nome = texto(corpo.nome, 80) || (daCalculadora ? "Visitante da calculadora" : "");
   const whatsapp = whatsappComDDI(texto(corpo.whatsapp, 20));
   if (nome.length < 2) return Response.json({ ok: false, erro: "Informe seu nome." }, { status: 400 });
-  if (!whatsapp) return Response.json({ ok: false, erro: "Informe um WhatsApp com DDD." }, { status: 400 });
-  if (corpo.consentimento !== true)
+  if (!whatsapp && !daCalculadora) return Response.json({ ok: false, erro: "Informe um WhatsApp com DDD." }, { status: 400 });
+  if (corpo.consentimento !== true && !daCalculadora)
     return Response.json({ ok: false, erro: "É preciso autorizar o contato." }, { status: 400 });
 
   // Proposta pedida pelo próprio visitante: só os campos da escolha dele. Nada de desconto, observação,
@@ -63,7 +66,7 @@ export async function POST(request: Request) {
     tipo: "lead",
     origem: texto(corpo.origem, 30) || "site",
     nome,
-    whatsapp,
+    whatsapp: whatsapp ?? undefined,
     negocio: texto(corpo.negocio, 80),
     respostas: mapaCurto(corpo.respostas),
     utm: mapaCurto(corpo.utm, chavesUtm),
