@@ -1,46 +1,9 @@
 import type { CSSProperties } from "react";
-import {
-  Calculator,
-  ChartLine,
-  Clock,
-  CupSoda,
-  MapPin,
-  Dumbbell,
-  Flame,
-  Flower2,
-  Heart,
-  House,
-  type LucideIcon,
-  PawPrint,
-  Quote,
-  Ruler,
-  Scale,
-  ShieldCheck,
-  Smile,
-  Sparkles,
-  Star,
-} from "lucide-react";
-import type { Fonte, Icone, Modelo } from "@/lib/modelos";
+import { Clock, MapPin, Quote, Star } from "lucide-react";
+import type { Fonte, Modelo } from "@/lib/modelos";
 import { Cardapio } from "./cardapio";
-
-const icones: Record<Icone, LucideIcon> = {
-  dente: Smile,
-  balanca: Scale,
-  flor: Flower2,
-  chama: Flame,
-  haltere: Dumbbell,
-  regua: Ruler,
-  calculadora: Calculator,
-  pata: PawPrint,
-  coracao: Heart,
-  estrela: Star,
-  relogio: Clock,
-  escudo: ShieldCheck,
-  sparkles: Sparkles,
-  copo: CupSoda,
-  casa: House,
-  grafico: ChartLine,
-};
+import { SiteEstetica } from "./estetica";
+import { icones } from "./icones";
 
 const fontes: Record<Fonte, string> = {
   bricolage: "var(--font-bricolage)",
@@ -60,6 +23,15 @@ export function SiteModelo({ modelo, apenasHero = false }: { modelo: Modelo; ape
     "--m-cartao": cores.cartao,
     "--m-fonte": fontes[modelo.fonte],
   } as CSSProperties;
+
+  // Layout de clínica de estética: tem seções próprias (procedimentos, resultados, especialista, FAQ...)
+  if (modelo.layout === "estetica") {
+    return (
+      <div style={estilo} className="@container bg-[var(--m-fundo)] font-sans text-[var(--m-texto)]">
+        <SiteEstetica modelo={modelo} apenasHero={apenasHero} />
+      </div>
+    );
+  }
 
   return (
     <div style={estilo} className="@container bg-[var(--m-fundo)] font-sans text-[var(--m-texto)]">

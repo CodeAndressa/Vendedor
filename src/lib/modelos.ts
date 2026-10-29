@@ -2,8 +2,11 @@
 // em /modelos/[slug]. Para criar um novo, copie um bloco e mude os dados.
 
 export type Fonte = "bricolage" | "fraunces" | "grotesk";
-export type Layout = "dividido" | "centro" | "cinema" | "lanchonete";
+export type Layout = "dividido" | "centro" | "cinema" | "lanchonete" | "estetica";
 export type Icone =
+  | "gota"
+  | "folha"
+  | "sol"
   | "dente"
   | "balanca"
   | "flor"
@@ -37,17 +40,112 @@ export type Modelo = {
     chamada: string;
     subtitulo: string;
     cta: string;
-    servicos: { icone: Icone; titulo: string; texto: string }[];
+    servicos: { icone: Icone; titulo: string; texto: string; duracao?: string }[];
     sobre: string;
     numeros: [string, string][];
     depoimento: { texto: string; nome: string };
     // Opcional: restaurantes e lanchonetes ganham cardápio com abas e bloco de endereço
     cardapio?: { categoria: string; nota?: string; itens: { nome: string; descricao: string; preco: string; selo?: string }[] }[];
     local?: { endereco: string; horario: string; avaliacao: string };
+    // Opcional: conteúdo extra das seções do layout "estetica"
+    clinica?: Clinica;
   };
 };
 
+export type Clinica = {
+  cidade: string;
+  destaqueChamada: string; // trecho da chamada que aparece em itálico
+  manifesto: string;
+  especialista: { nome: string; cargo: string; texto: string; formacao: string[] };
+  diferenciais: { icone: Icone; titulo: string; texto: string }[];
+  resultados: { procedimento: string; perfil: string; sessoes: string; texto: string }[];
+  passos: { titulo: string; texto: string }[];
+  depoimentos: { texto: string; nome: string; procedimento: string }[];
+  horarios: [string, string][];
+  faq: { pergunta: string; resposta: string }[];
+};
+
 export const modelos: Modelo[] = [
+  {
+    slug: "nacar",
+    nome: "Nácar",
+    segmento: "Clínica de estética avançada",
+    categoria: "Beleza",
+    tipo: "Site",
+    estilos: ["Claro", "Minimalista", "Elegante"],
+    layout: "estetica",
+    fonte: "fraunces",
+    cores: { fundo: "#F7F2EC", texto: "#2F2722", destaque: "#56634F", textoDestaque: "#FFFFFF", suave: "#ECE1D5", cartao: "#FCFAF7" },
+    negocio: {
+      nome: "Lis Estética Avançada",
+      icone: "flor",
+      chamada: "Sua melhor pele, com a naturalidade de sempre.",
+      subtitulo:
+        "Harmonização, bioestimuladores e tecnologias para a pele, planejados a partir de uma avaliação sem pressa do seu rosto.",
+      cta: "Agendar avaliação",
+      servicos: [
+        { icone: "gota", titulo: "Limpeza de pele profunda", texto: "Extração cuidadosa, peeling enzimático e máscara calmante para uma pele limpa e luminosa.", duracao: "75 min" },
+        { icone: "sparkles", titulo: "Harmonização facial", texto: "Ajustes sutis de contorno e proporção, respeitando os traços que fazem você ser você.", duracao: "60 min" },
+        { icone: "folha", titulo: "Bioestimulador de colágeno", texto: "Estímulo gradual do colágeno para mais firmeza e sustentação, com resultado que dura.", duracao: "45 min" },
+        { icone: "sol", titulo: "Laser e luz pulsada", texto: "Manchas, vasinhos e textura tratados com tecnologia ajustada ao seu tipo de pele.", duracao: "40 min" },
+        { icone: "gota", titulo: "Skinbooster", texto: "Hidratação profunda de dentro para fora, com um viço que aparece já nas primeiras semanas.", duracao: "30 min" },
+        { icone: "estrela", titulo: "Microagulhamento", texto: "Renova a textura e suaviza marcas de acne, com recuperação rápida e acompanhada.", duracao: "50 min" },
+      ],
+      sobre:
+        "Uma clínica pequena de propósito: poucos atendimentos por dia, salas silenciosas e tempo para entender o que você quer, antes de propor qualquer procedimento.",
+      numeros: [["12", "anos de experiência"], ["4 mil", "atendimentos"], ["4,9", "no Google"]],
+      depoimento: {
+        texto: "Saí com a sensação de ter descansado um mês. Ninguém percebe que fiz algo, só dizem que estou com a pele linda.",
+        nome: "Paciente da clínica",
+      },
+      local: { endereco: "Rua das Magnólias, 480 · Jardim Botânico", horario: "Seg a sex, 9h às 20h", avaliacao: "4,9 no Google" },
+      clinica: {
+        cidade: "Curitiba",
+        destaqueChamada: "com a naturalidade",
+        manifesto:
+          "Acreditamos em resultados que não chamam atenção para o procedimento, e sim para você. Menos excesso, mais critério: cada protocolo começa por ouvir e termina com acompanhamento.",
+        especialista: {
+          nome: "Dra. Helena Prado",
+          cargo: "Biomédica esteta e fundadora",
+          texto:
+            "Há doze anos a Helena cuida de pele com um olhar que mistura técnica e delicadeza. Ela acompanha pessoalmente cada paciente, da primeira avaliação ao retorno.",
+          formacao: ["Pós-graduação em estética avançada", "Especialização em harmonização facial", "Formação contínua em tecnologias a laser"],
+        },
+        diferenciais: [
+          { icone: "relogio", titulo: "Avaliação sem pressa", texto: "Uma hora de conversa e análise de pele antes de qualquer indicação." },
+          { icone: "escudo", titulo: "Produtos rastreáveis", texto: "Cada ampola é aberta na sua frente, com o lote anotado no prontuário." },
+          { icone: "folha", titulo: "Plano por escrito", texto: "Você sai com o protocolo, as datas e o investimento, sem surpresa." },
+          { icone: "coracao", titulo: "Retorno incluso", texto: "Revisão em 15 dias para ajustar o que for preciso, sem custo." },
+        ],
+        resultados: [
+          { procedimento: "Bioestimulador", perfil: "Paciente, 42 anos", sessoes: "3 sessões em 4 meses", texto: "Contorno mais definido e pele com aspecto descansado." },
+          { procedimento: "Laser", perfil: "Paciente, 35 anos", sessoes: "4 sessões em 2 meses", texto: "Manchas de sol suavizadas e tom de pele mais uniforme." },
+          { procedimento: "Skinbooster", perfil: "Paciente, 29 anos", sessoes: "2 sessões em 1 mês", texto: "Viço e hidratação visíveis, sem mudar a expressão." },
+        ],
+        passos: [
+          { titulo: "Avaliação", texto: "Conversa, análise de pele e fotos de referência." },
+          { titulo: "Plano", texto: "Protocolo por escrito, com prioridades e prazos." },
+          { titulo: "Sessões", texto: "Procedimentos em sala privativa, com conforto." },
+          { titulo: "Retorno", texto: "Revisão em 15 dias e acompanhamento pelo WhatsApp." },
+        ],
+        depoimentos: [
+          { texto: "A Helena me convenceu a fazer menos do que eu pedi, e foi a melhor decisão. Ficou natural.", nome: "Paciente da clínica", procedimento: "Harmonização facial" },
+          { texto: "Ambiente lindo e calmo, atendimento no horário e explicação de cada etapa.", nome: "Paciente da clínica", procedimento: "Limpeza de pele" },
+        ],
+        horarios: [
+          ["Segunda a sexta", "9h às 20h"],
+          ["Sábado", "9h às 14h"],
+          ["Domingo", "Fechado"],
+        ],
+        faq: [
+          { pergunta: "A avaliação tem custo?", resposta: "A primeira avaliação é cobrada e o valor é abatido integralmente se você fizer o procedimento em até 30 dias." },
+          { pergunta: "O resultado fica artificial?", resposta: "Nosso foco é a naturalidade. Trabalhamos com doses conservadoras e fazemos ajustes no retorno, se necessário." },
+          { pergunta: "Preciso me afastar da rotina?", resposta: "A maioria dos procedimentos permite voltar às atividades no mesmo dia. Explicamos os cuidados de cada um na avaliação." },
+          { pergunta: "Como faço para agendar?", resposta: "Pelo WhatsApp. Respondemos em horário comercial e enviamos as opções de dia e horário disponíveis." },
+        ],
+      },
+    },
+  },
   {
     slug: "sereno",
     nome: "Sereno",
