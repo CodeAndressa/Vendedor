@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { config, linkWhatsApp } from "@/lib/config";
 import { nichos } from "@/lib/nichos";
 import { Reveal } from "./reveal";
+import { Logo } from "./logo";
 import { Botao, Titulo, WhatsAppIcon } from "./ui";
 
 export function ChamadaFinal() {
@@ -66,10 +67,7 @@ export function Rodape() {
     <footer className="overflow-hidden bg-forest pt-16 pb-28 text-white md:pb-10">
       <div className="mx-auto grid max-w-[1440px] gap-12 px-5 md:px-10 xl:px-16 md:grid-cols-[1.4fr_1fr_1fr_1.2fr]">
         <div>
-          <div className="font-display text-2xl">
-            {config.marca}
-            <span className="text-lime">.</span>
-          </div>
+          <Logo claro />
           <p className="mt-3 max-w-xs text-white/60">
             Sites e landing pages para pequenos negócios, no ar em 7 dias.
           </p>
@@ -181,7 +179,7 @@ export function ContatoFixo() {
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0, opacity: 0 }}
             whileHover={{ scale: 1.08 }}
-            className="fixed right-6 bottom-6 z-40 hidden size-16 place-items-center rounded-full bg-wa text-white shadow-[0_14px_30px_-10px_rgba(37,211,102,0.8)] md:grid"
+            className="fixed right-6 bottom-24 z-40 hidden size-14 place-items-center rounded-full bg-wa text-white shadow-[0_14px_30px_-10px_rgba(37,211,102,0.8)] md:grid"
           >
             <WhatsAppIcon className="size-8" />
           </motion.a>

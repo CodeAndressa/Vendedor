@@ -10,6 +10,7 @@ import { SiteModelo } from "@/components/modelo/site-modelo";
 import { Botao, Eyebrow, Titulo, WhatsAppIcon } from "@/components/ui";
 import { precos, prazos, reais } from "@/lib/config";
 import { modeloPorSlug } from "@/lib/modelos";
+import { Assistente } from "@/components/assistente";
 import { nichoPorSlug, nichos } from "@/lib/nichos";
 
 export function generateStaticParams() {
@@ -132,6 +133,7 @@ export default async function PaginaNicho({ params }: PageProps<"/para/[slug]">)
       </main>
       <Rodape />
       <ContatoFixo />
+      <Assistente />
     </>
   );
 }

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { Menu, X } from "lucide-react";
 import { config } from "@/lib/config";
+import { Logo } from "./logo";
 import { Botao, WhatsAppIcon } from "./ui";
 
 const links = [
@@ -36,9 +37,8 @@ export function Header({ escuro = false }: { escuro?: boolean }) {
       }`}
     >
       <div className="mx-auto flex h-[72px] max-w-[1440px] items-center justify-between gap-4 px-5 md:px-10 xl:px-16">
-        <Link href="/" className="font-display text-[26px] leading-none tracking-[-0.01em] whitespace-nowrap">
-          {config.marca}
-          <span className={sobreEscuro ? "text-lime" : "text-brand"}>.</span>
+        <Link href="/" aria-label={`${config.marca}, página inicial`}>
+          <Logo claro={sobreEscuro} />
         </Link>
 
         <nav aria-label="Seções" className={`hidden items-center gap-7 text-[15px] lg:flex ${sobreEscuro ? "text-white/70" : "text-ink-soft"}`}>

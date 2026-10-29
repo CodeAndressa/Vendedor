@@ -11,6 +11,7 @@ import { bases, extras, metades, parcelaAssinatura, total } from "@/lib/catalogo
 import { assinaturaSite, config, precos, reais, siteUrl } from "@/lib/config";
 import { modeloPorSlug } from "@/lib/modelos";
 import { decodificar, formatarData, hoje } from "@/lib/proposta";
+import { Logo } from "@/components/logo";
 import { assinaturaConfere } from "@/lib/servidor";
 
 // a medição do site atual pode levar alguns segundos na primeira abertura
@@ -74,9 +75,8 @@ async function Conteudo({ searchParams }: { searchParams: PageProps<"/proposta">
       <ContarVisualizacao p={codigo} a={assinatura} />
       <header className="border-b border-line bg-forest text-white print:border-0 print:bg-white print:text-ink">
         <div className="mx-auto flex max-w-4xl items-center justify-between gap-4 px-5 py-5">
-          <Link href="/" className="font-display text-lg">
-            {config.marca}
-            <span className="text-lime print:text-brand">.</span>
+          <Link href="/" aria-label={config.marca}>
+            <Logo claro />
           </Link>
           <span className="text-sm text-white/60 print:text-ink-soft">Proposta comercial</span>
         </div>

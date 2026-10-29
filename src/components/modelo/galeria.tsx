@@ -142,8 +142,8 @@ export function Galeria({ previas }: { previas: Record<string, ReactNode> }) {
                     <p className="text-sm text-ink-soft">{m.segmento}</p>
                   </div>
                   <div className="flex -space-x-1.5 pt-1">
-                    {[m.cores.fundo, m.cores.destaque, m.cores.texto].map((c) => (
-                      <span key={c} className="size-5 rounded-full border-2 border-card" style={{ background: c }} />
+                    {[m.cores.fundo, m.cores.destaque, m.cores.texto].map((c, i) => (
+                      <span key={i} className="size-5 rounded-full border-2 border-card" style={{ background: c }} />
                     ))}
                   </div>
                 </div>
