@@ -23,7 +23,7 @@ export function Portfolio() {
         <div className="mt-14 grid gap-5">
           {projetos.map((p) => (
             <Reveal key={p.cliente}>
-              <article className="group relative overflow-hidden rounded-[28px] bg-forest text-white ring-1 ring-black/5">
+              <article data-holofote className="group relative overflow-hidden rounded-[28px] bg-forest text-white ring-1 ring-black/5">
                 <div
                   aria-hidden
                   className="pointer-events-none absolute -top-40 -right-40 size-[620px] rounded-full bg-[radial-gradient(circle,rgba(23,120,74,0.45)_0%,transparent_65%)]"

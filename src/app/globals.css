@@ -104,3 +104,118 @@ h3 em {
     animation: none;
   }
 }
+
+/* ---------- abertura do site (uma vez por sessão) ---------- */
+.abertura {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 26px;
+  background: #0b1d15;
+  clip-path: inset(0 0 0 0);
+  animation: abertura-sai 0.95s cubic-bezier(0.76, 0, 0.24, 1) 1.35s forwards;
+}
+html.ja-abriu .abertura {
+  display: none;
+}
+html.abrindo {
+  overflow: hidden;
+}
+.abertura-nome {
+  display: flex;
+  align-items: center;
+  font: 900 clamp(52px, 9vw, 104px) / 1 var(--font-inter), sans-serif;
+  letter-spacing: -0.06em;
+  color: #3fc47e;
+}
+.abertura-nome span {
+  opacity: 0;
+  animation: abertura-letra 0.01s forwards;
+}
+.abertura-nome i {
+  display: inline-block;
+  width: 0.08em;
+  height: 0.88em;
+  margin-left: 0.06em;
+  border-radius: 99px;
+  background: #d9c28e;
+}
+.abertura-linha {
+  position: relative;
+  width: min(240px, 50vw);
+  height: 1px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.12);
+}
+.abertura-linha::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #d9c28e;
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: abertura-linha 1.15s cubic-bezier(0.65, 0, 0.35, 1) 0.15s forwards;
+}
+@keyframes abertura-letra {
+  to { opacity: 1; }
+}
+@keyframes abertura-linha {
+  to { transform: scaleX(1); }
+}
+@keyframes abertura-sai {
+  to { clip-path: inset(0 0 100% 0); visibility: hidden; }
+}
+
+/* ---------- botões magnéticos e brilho ---------- */
+[data-magnetico] {
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
+}
+[data-magnetico].puxado {
+  transition-duration: 0.18s;
+}
+.brilho {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.brilho::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.6) 50%, transparent 65%);
+  transform: translateX(-130%);
+  animation: brilho-passa 5s cubic-bezier(0.65, 0, 0.35, 1) 2.6s infinite;
+}
+@keyframes brilho-passa {
+  0% { transform: translateX(-130%); }
+  28%, 100% { transform: translateX(130%); }
+}
+
+/* ---------- holofote nos cartões escuros ---------- */
+[data-holofote] {
+  position: relative;
+  isolation: isolate;
+}
+[data-holofote]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(460px circle at var(--hx, -999px) var(--hy, -999px), rgba(217, 194, 142, 0.14), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s;
+  pointer-events: none;
+}
+[data-holofote]:hover::before {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .abertura { display: none; }
+  .brilho::after { animation: none; }
+}

@@ -127,6 +127,12 @@ export function Assistente() {
               )}
               {mensagens.length === 1 && (
                 <div className="flex flex-wrap gap-2 pt-1">
+                  <a
+                    href="/analise-ia"
+                    className="rounded-full border border-lime bg-lime/20 px-3 py-1.5 text-[13px] font-semibold text-[#8A6F33] transition hover:bg-lime/35"
+                  >
+                    ✨ Como a IA enxerga meu negócio?
+                  </a>
                   {sugestoes.map((s) => (
                     <button
                       key={s}

@@ -64,7 +64,7 @@ export function PorQue() {
         <div className="mt-14 grid gap-5 md:grid-cols-3">
           {cards.map((c, i) => (
             <Reveal key={c.titulo} delay={i * 0.08}>
-              <div className="h-full rounded-[24px] border border-white/10 bg-white/[0.03] p-8 transition duration-300 hover:border-lime/40 hover:bg-white/[0.05]">
+              <div data-holofote className="h-full rounded-[24px] border border-white/10 bg-white/[0.03] p-8 transition duration-300 hover:border-lime/40 hover:bg-white/[0.05]">
                 <c.icone className="mb-8 size-7 text-lime" strokeWidth={1.5} />
                 <h3 className="font-display text-[28px] leading-tight">{c.titulo}</h3>
                 <p className="mt-2 text-white/65">{c.texto}</p>
@@ -212,7 +212,7 @@ export function Seguranca() {
         <div className="grid gap-px overflow-hidden rounded-[24px] border border-white/10 bg-white/10 sm:grid-cols-2">
           {itens.map((it, i) => (
             <Reveal key={it.titulo} delay={i * 0.06} className={i === itens.length - 1 ? "sm:col-span-2" : ""}>
-              <div className="h-full bg-forest p-7">
+              <div data-holofote className="h-full bg-forest p-7">
                 <it.icone className="size-6 text-lime" strokeWidth={1.5} />
                 <h3 className="mt-5 font-display text-2xl">{it.titulo}</h3>
                 <p className="mt-2 text-[15px] leading-relaxed text-white/60">{it.texto}</p>
@@ -268,7 +268,7 @@ export function BuscaIA() {
           </Reveal>
 
           <Reveal delay={0.1}>
-            <div className="relative h-full overflow-hidden rounded-[28px] bg-forest p-8 text-white md:p-10">
+            <div data-holofote className="relative h-full overflow-hidden rounded-[28px] bg-forest p-8 text-white md:p-10">
               <div aria-hidden className="pointer-events-none absolute -top-24 -right-24 size-72 rounded-full bg-[radial-gradient(circle,rgba(217,194,142,0.22),transparent_70%)]" />
               <div className="relative">
                 <span className="text-[11px] font-medium tracking-[0.22em] text-lime uppercase">Em todo site que eu entrego</span>

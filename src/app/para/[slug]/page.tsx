@@ -11,6 +11,7 @@ import { Botao, Eyebrow, Titulo, WhatsAppIcon } from "@/components/ui";
 import { precos, prazos, reais } from "@/lib/config";
 import { modeloPorSlug } from "@/lib/modelos";
 import { Assistente } from "@/components/assistente";
+import { Efeitos } from "@/components/efeitos";
 import { nichoPorSlug, nichos } from "@/lib/nichos";
 
 export function generateStaticParams() {
@@ -40,6 +41,7 @@ export default async function PaginaNicho({ params }: PageProps<"/para/[slug]">)
   return (
     <>
       <JsonLd dados={dadosFaq(n.perguntas)} />
+      <Efeitos />
       <Header />
       <main>
         <section className="mx-auto grid max-w-[1440px] items-center gap-12 px-5 md:px-10 xl:px-16 pt-10 pb-20 md:pt-16 lg:grid-cols-[1.05fr_0.95fr]">

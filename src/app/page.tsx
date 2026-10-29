@@ -13,6 +13,8 @@ import { Vitrine } from "@/components/modelo/vitrine";
 import { Depoimentos, Portfolio, Sobre } from "@/components/prova";
 import { BuscaIA, ComoFunciona, Garantia, Incluso, PorQue, Seguranca } from "@/components/secoes";
 import { Assistente } from "@/components/assistente";
+import { Abertura } from "@/components/abertura";
+import { Efeitos } from "@/components/efeitos";
 import { modelos } from "@/lib/modelos";
 
 export const metadata: Metadata = { alternates: { canonical: "/" } };
@@ -31,6 +33,8 @@ export default function Home() {
     <>
       <JsonLd dados={dadosNegocio()} />
       <JsonLd dados={dadosFaq()} />
+      <Abertura />
+      <Efeitos />
       <Header escuro />
       <main>
         <Hero />

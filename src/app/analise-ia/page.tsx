@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { AnaliseIA } from "@/components/analise-ia";
 import { Assistente } from "@/components/assistente";
 import { Rodape } from "@/components/final";
+import { Efeitos } from "@/components/efeitos";
 import { Header } from "@/components/header";
 
 export const metadata: Metadata = {
@@ -14,6 +15,7 @@ export const metadata: Metadata = {
 export default function PaginaAnaliseIA() {
   return (
     <>
+      <Efeitos />
       <Header escuro />
       <main className="relative -mt-[72px] min-h-svh overflow-hidden bg-forest pt-[72px] text-white">
         <div aria-hidden className="pointer-events-none absolute -top-40 left-[-10%] size-[720px] rounded-full bg-[radial-gradient(circle,rgba(23,120,74,0.35)_0%,transparent_65%)]" />

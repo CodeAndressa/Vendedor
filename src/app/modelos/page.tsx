@@ -5,6 +5,7 @@ import { Galeria } from "@/components/modelo/galeria";
 import { Miniatura } from "@/components/modelo/miniatura";
 import { SiteModelo } from "@/components/modelo/site-modelo";
 import { Eyebrow } from "@/components/ui";
+import { Efeitos } from "@/components/efeitos";
 import { modelos } from "@/lib/modelos";
 
 export const metadata: Metadata = {
@@ -24,6 +25,7 @@ export default function PaginaModelos() {
 
   return (
     <>
+      <Efeitos />
       <Header />
       <main className="mx-auto max-w-[1440px] px-5 md:px-10 xl:px-16 pt-10 pb-10 md:pt-16">
         <Eyebrow>Modelos prontos</Eyebrow>

@@ -29,8 +29,8 @@ export function ChamadaFinal() {
               <Botao mensagem="Oi! Quero começar meu site." variante="lima">
                 <WhatsAppIcon /> Chamar no WhatsApp
               </Botao>
-              <Botao href="/#orcamento" variante="claro">
-                Simular orçamento
+              <Botao href="/analise-ia" variante="claro">
+                Ver como a IA me enxerga
               </Botao>
             </div>
           </div>

@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { ArrowRight, Check, Loader2, RotateCcw, Sparkles, X } from "lucide-react";
 import { config, linkWhatsApp } from "@/lib/config";
+import { segmentos } from "@/lib/segmentos";
 import { evento } from "@/lib/rastreio";
 import { LogoSimbolo } from "./logo";
 import { WhatsAppIcon } from "./ui";
@@ -15,7 +16,6 @@ type Resultado = { nota: number; pergunta: string; indicados: string[]; apareceu
 const campo =
   "min-h-12 w-full rounded-xl border border-white/12 bg-white/[0.04] px-4 text-white placeholder:text-white/35 outline-none transition focus:border-lime/70 focus:bg-white/[0.07]";
 const etapas = ["Perguntando para a IA como um cliente", "Lendo o seu site", "Conferindo os robôs das buscas", "Calculando a sua nota"];
-const segmentos = ["Hamburgueria", "Restaurante", "Pizzaria", "Clínica odontológica", "Clínica de estética", "Salão de beleza", "Barbearia", "Escritório de advocacia", "Contabilidade", "Academia", "Personal trainer", "Pet shop", "Imobiliária", "Oficina mecânica", "Loja de roupas"];
 
 function utm() {
   try {
@@ -93,14 +93,9 @@ export function AnaliseIA() {
             <div className="text-[11px] font-medium tracking-[0.22em] text-lime uppercase">Sobre o negócio</div>
             <input value={dados.negocio} onChange={muda("negocio")} placeholder="Nome do negócio" aria-label="Nome do negócio" className={campo} />
             <div className="grid gap-3 sm:grid-cols-2">
-              <input value={dados.segmento} onChange={muda("segmento")} list="segmentos" placeholder="O que ele faz (ex.: hamburgueria)" aria-label="Segmento" className={campo} />
+              <CampoSegmento valor={dados.segmento} mudar={(v) => setDados((d) => ({ ...d, segmento: v }))} />
               <input value={dados.cidade} onChange={muda("cidade")} placeholder="Cidade" aria-label="Cidade" className={campo} />
             </div>
-            <datalist id="segmentos">
-              {segmentos.map((s) => (
-                <option key={s} value={s} />
-              ))}
-            </datalist>
             <input value={dados.site} onChange={muda("site")} placeholder="Site ou Instagram (opcional)" aria-label="Site" inputMode="url" className={campo} />
             <div className="mt-3 text-[11px] font-medium tracking-[0.22em] text-lime uppercase">Para onde mando o resultado</div>
             <div className="grid gap-3 sm:grid-cols-2">
@@ -108,10 +103,15 @@ export function AnaliseIA() {
               <input value={dados.whatsapp} onChange={muda("whatsapp")} placeholder="WhatsApp com DDD" aria-label="WhatsApp" inputMode="tel" autoComplete="tel" className={campo} />
             </div>
             <input value={dados.empresa} onChange={muda("empresa")} tabIndex={-1} autoComplete="off" aria-hidden className="hidden" />
-            <label className="mt-1 flex cursor-pointer gap-3 text-sm text-white/60">
-              <input type="checkbox" checked={consentimento} onChange={(e) => setConsentimento(e.target.checked)} className="mt-0.5 size-4 shrink-0 accent-[#D9C28E]" />
-              Autorizo a {config.nome.split(" ")[0]} a falar comigo pelo WhatsApp sobre a análise. Veja a{" "}
-              <Link href="/privacidade" className="underline">política de privacidade</Link>.
+            <label className="mt-1 flex cursor-pointer items-start gap-3 text-sm leading-relaxed text-white/60">
+              <input type="checkbox" checked={consentimento} onChange={(e) => setConsentimento(e.target.checked)} className="mt-1 size-4 shrink-0 accent-[#D9C28E]" />
+              <span>
+                Autorizo a {config.nome.split(" ")[0]} a falar comigo pelo WhatsApp sobre a análise. Veja a{" "}
+                <Link href="/privacidade" className="underline underline-offset-2 hover:text-white">
+                  política de privacidade
+                </Link>
+                .
+              </span>
             </label>
             <button
               type="submit"
@@ -238,6 +238,88 @@ function Relatorio({ resultado, negocio, cidade, refazer }: { resultado: Resulta
           </button>
         </div>
       </div>
+    </div>
+  );
+}
+
+const semAcento = (t: string) => t.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+// Campo de segmento com busca: filtra a lista enquanto digita, mas aceita qualquer texto.
+function CampoSegmento({ valor, mudar }: { valor: string; mudar: (v: string) => void }) {
+  const [aberto, setAberto] = useState(false);
+  const [ativo, setAtivo] = useState(0);
+  const opcoes = useMemo(() => {
+    const termo = semAcento(valor.trim());
+    if (!termo) return segmentos.slice(0, 40);
+    const comeca = segmentos.filter((s) => semAcento(s).startsWith(termo));
+    const contem = segmentos.filter((s) => !semAcento(s).startsWith(termo) && semAcento(s).includes(termo));
+    return [...comeca, ...contem].slice(0, 40);
+  }, [valor]);
+  const escolher = (s: string) => {
+    mudar(s);
+    setAberto(false);
+  };
+
+  return (
+    <div className="relative">
+      <input
+        value={valor}
+        onChange={(e) => {
+          mudar(e.target.value);
+          setAtivo(0);
+          setAberto(true);
+        }}
+        onFocus={() => setAberto(true)}
+        onBlur={() => setTimeout(() => setAberto(false), 120)}
+        onKeyDown={(e) => {
+          if (!aberto || !opcoes.length) return;
+          if (e.key === "ArrowDown") {
+            e.preventDefault();
+            setAtivo((a) => Math.min(a + 1, opcoes.length - 1));
+          } else if (e.key === "ArrowUp") {
+            e.preventDefault();
+            setAtivo((a) => Math.max(a - 1, 0));
+          } else if (e.key === "Enter" && semAcento(opcoes[ativo]) !== semAcento(valor)) {
+            e.preventDefault();
+            escolher(opcoes[ativo]);
+          } else if (e.key === "Escape") setAberto(false);
+        }}
+        placeholder="O que ele faz (ex.: controle de ponto)"
+        aria-label="O que o negócio faz"
+        role="combobox"
+        aria-expanded={aberto}
+        aria-controls="lista-segmentos"
+        aria-autocomplete="list"
+        autoComplete="off"
+        className={campo}
+      />
+      {aberto && opcoes.length > 0 && (
+        <ul
+          id="lista-segmentos"
+          role="listbox"
+          data-lenis-prevent
+          className="absolute inset-x-0 top-[calc(100%+6px)] z-20 max-h-64 overflow-y-auto rounded-xl border border-white/10 bg-[#0F2A1E] p-1.5 shadow-[0_24px_50px_-20px_rgba(0,0,0,0.8)]"
+        >
+          {opcoes.map((s, i) => (
+            <li
+              key={s}
+              role="option"
+              aria-selected={i === ativo}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                escolher(s);
+              }}
+              onMouseEnter={() => setAtivo(i)}
+              className={`cursor-pointer rounded-lg px-3 py-2 text-[15px] ${i === ativo ? "bg-white/10 text-white" : "text-white/70"}`}
+            >
+              {s}
+            </li>
+          ))}
+          {valor.trim() && !segmentos.some((s) => semAcento(s) === semAcento(valor.trim())) && (
+            <li className="px-3 pt-2 pb-1 text-xs text-white/40">Não achou? Pode deixar como escreveu.</li>
+          )}
+        </ul>
+      )}
     </div>
   );
 }

@@ -3,13 +3,12 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
-import { Menu, X } from "lucide-react";
+import { Menu, Sparkles, X } from "lucide-react";
 import { config } from "@/lib/config";
 import { Logo } from "./logo";
 import { Botao, WhatsAppIcon } from "./ui";
 
 const links = [
-  { href: "/analise-ia", label: "Análise de IA grátis" },
   { href: "/modelos", label: "Modelos" },
   { href: "/#orcamento", label: "Preços" },
   { href: "/#mensal", label: "Planos mensais" },
@@ -39,10 +38,17 @@ export function Header({ escuro = false }: { escuro?: boolean }) {
     >
       <div className="mx-auto flex h-[72px] max-w-[1440px] items-center justify-between gap-4 px-5 md:px-10 xl:px-16">
         <Link href="/" aria-label={`${config.marca}, página inicial`}>
-          <Logo claro={sobreEscuro} />
+          <Logo claro={sobreEscuro} digitar />
         </Link>
 
         <nav aria-label="Seções" className={`hidden items-center gap-7 text-[15px] lg:flex ${sobreEscuro ? "text-white/70" : "text-ink-soft"}`}>
+          <Link
+            href="/analise-ia"
+            className="brilho inline-flex items-center gap-1.5 rounded-full border border-lime/50 bg-lime/15 px-3.5 py-1.5 font-semibold text-[#B8964F] transition hover:bg-lime/25 data-[escuro=true]:text-lime"
+            data-escuro={sobreEscuro}
+          >
+            <Sparkles className="size-3.5" /> Como a IA te vê?
+          </Link>
           {links.map((l) => (
             <Link key={l.href} href={l.href} className={`transition ${sobreEscuro ? "hover:text-white" : "hover:text-ink"}`}>
               {l.label}
@@ -78,6 +84,13 @@ export function Header({ escuro = false }: { escuro?: boolean }) {
             className="overflow-hidden border-t border-line lg:hidden"
           >
             <div className="mx-auto flex max-w-[1440px] flex-col px-5 md:px-10 xl:px-16 py-3">
+              <Link
+                href="/analise-ia"
+                onClick={() => setAberto(false)}
+                className="my-2 inline-flex items-center gap-2 rounded-2xl bg-forest px-4 py-3.5 text-lg font-semibold text-lime"
+              >
+                <Sparkles className="size-5" /> Como a IA enxerga meu negócio? (grátis)
+              </Link>
               {links.map((l) => (
                 <Link
                   key={l.href}

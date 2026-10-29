@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { PalavrasSobem } from "./palavras";
 import { linkWhatsApp } from "@/lib/config";
 
 export function WhatsAppIcon({ className = "size-5" }: { className?: string }) {
@@ -28,9 +29,10 @@ export function Botao({ children, variante = "primario", className = "", mensage
   const externo = mensagem !== undefined;
   return (
     <a
+      data-magnetico
       href={externo ? linkWhatsApp(mensagem) : href}
       {...(externo ? { target: "_blank", rel: "noopener" } : {})}
-      className={`inline-flex min-h-12 items-center justify-center gap-2.5 rounded-full px-6 py-3 text-[15px] font-medium tracking-[-0.005em] transition duration-300 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${variantes[variante]} ${className}`}
+      className={`inline-flex min-h-12 items-center justify-center gap-2.5 rounded-full px-6 py-3 text-[15px] font-medium tracking-[-0.005em] transition duration-300 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${variantes[variante]} ${variante === "lima" ? "brilho" : ""} ${className}`}
     >
       {children}
     </a>
@@ -53,7 +55,7 @@ export function Titulo({ children, className = "" }: { children: ReactNode; clas
     <h2
       className={`font-display text-[clamp(2.1rem,3.8vw,4rem)] leading-[1.04] tracking-[-0.03em] text-balance [&_em]:text-brand ${className}`}
     >
-      {children}
+      <PalavrasSobem>{children}</PalavrasSobem>
     </h2>
   );
 }

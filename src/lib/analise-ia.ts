@@ -33,8 +33,7 @@ function citado(nome: string, indicados: string[]) {
   });
 }
 
-async function perguntarIA(e: Entrada) {
-  const pergunta = `Quais são bons lugares de ${e.segmento.toLowerCase()} em ${e.cidade}? Me indique 5 pelo nome.`;
+async function perguntarJSON(sistema: string, pergunta: string): Promise<Record<string, unknown>> {
   const base = (process.env.GROQ_BASE_URL || "https://api.groq.com/openai/v1").replace(/\/$/, "");
   const r = await fetch(`${base}/chat/completions`, {
     method: "POST",
@@ -42,11 +41,7 @@ async function perguntarIA(e: Entrada) {
     body: JSON.stringify({
       model: process.env.GROQ_MODEL || "openai/gpt-oss-120b",
       messages: [
-        {
-          role: "system",
-          content:
-            'Você é um assistente de IA respondendo a um consumidor brasileiro. Responda só com JSON no formato {"indicados":["Nome do lugar", ...]}, com até 5 nomes de estabelecimentos reais que você conhece. Se não conhecer nenhum com segurança, devolva {"indicados":[]}.',
-        },
+        { role: "system", content: sistema },
         { role: "user", content: pergunta },
       ],
       temperature: 0.2,
@@ -57,17 +52,40 @@ async function perguntarIA(e: Entrada) {
     }),
     signal: AbortSignal.timeout(20000),
   }).catch(() => null);
-  if (!r?.ok) return { pergunta, indicados: [] as string[] };
+  if (!r?.ok) return {};
   const json = await r.json().catch(() => null);
   try {
-    const conteudo = JSON.parse(json?.choices?.[0]?.message?.content ?? "{}") as { indicados?: unknown };
-    const indicados = Array.isArray(conteudo.indicados)
-      ? conteudo.indicados.filter((x): x is string => typeof x === "string").map((x) => x.slice(0, 80)).slice(0, 5)
-      : [];
-    return { pergunta, indicados };
+    return JSON.parse(json?.choices?.[0]?.message?.content ?? "{}");
   } catch {
-    return { pergunta, indicados: [] as string[] };
+    return {};
   }
+}
+
+// Serve para lugar (hamburgueria) e para empresa ou profissional (controle de ponto, advogado).
+async function perguntarIA(e: Entrada) {
+  const pergunta = `Quem você recomenda para ${e.segmento.toLowerCase()} em ${e.cidade}? Me indique 5 empresas ou profissionais pelo nome.`;
+  const conteudo = (await perguntarJSON(
+    'Você é um assistente de IA respondendo a um cliente brasileiro. Responda só com JSON no formato {"indicados":["Nome", ...]}, com até 5 nomes reais de empresas, lugares ou profissionais que você conhece. Se não conhecer nenhum com segurança, devolva {"indicados":[]}.',
+    pergunta,
+  )) as { indicados?: unknown };
+  const indicados = Array.isArray(conteudo.indicados)
+    ? conteudo.indicados.filter((x): x is string => typeof x === "string").map((x) => x.slice(0, 80)).slice(0, 5)
+    : [];
+  return { pergunta, indicados };
+}
+
+// A IA sabe quem é o negócio? Só vale se ela descrever o ramo certo: assim uma resposta inventada não conta como acerto.
+async function iaConhece(e: Entrada) {
+  const r = (await perguntarJSON(
+    'Responda só com JSON no formato {"conhece":true|false,"ramo":"o que a empresa faz, em poucas palavras"}. Diga conhece=false se não tiver informação confiável sobre essa empresa específica. Não invente.',
+    `Você conhece a empresa "${e.nome}", de ${e.cidade}? O que ela faz?`,
+  )) as { conhece?: unknown; ramo?: unknown };
+  const ramo = typeof r.ramo === "string" ? r.ramo.slice(0, 120) : "";
+  if (r.conhece !== true || !ramo) return { conhece: false, ramo: "" };
+  const radicais = (t: string) => normalizar(t).split(" ").filter((p) => p.length > 3).map((p) => p.slice(0, 5));
+  const doSegmento = radicais(e.segmento);
+  const bate = doSegmento.some((p) => radicais(ramo).includes(p));
+  return { conhece: bate, ramo };
 }
 
 const tiposLocais =
@@ -202,7 +220,7 @@ async function perfilGoogle(e: Entrada): Promise<Resultado["google"]> {
 }
 
 export async function analisarNegocio(e: Entrada): Promise<Resultado> {
-  const [ia, itensSite, google] = await Promise.all([perguntarIA(e), checarSite(e), perfilGoogle(e)]);
+  const [ia, conhecido, itensSite, google] = await Promise.all([perguntarIA(e), iaConhece(e), checarSite(e), perfilGoogle(e)]);
   const apareceu = citado(e.nome, ia.indicados);
   const itens: Item[] = [
     {
@@ -212,6 +230,16 @@ export async function analisarNegocio(e: Entrada): Promise<Resultado> {
       detalhe: apareceu
         ? "A IA citou o seu negócio quando um cliente perguntou pelo seu tipo de serviço na cidade."
         : "Perguntei à IA como se fosse um cliente e o seu negócio não apareceu entre as indicações.",
+    },
+    {
+      titulo: "A IA sabe quem você é",
+      ok: conhecido.conhece,
+      peso: 12,
+      detalhe: conhecido.conhece
+        ? `Perguntei pelo nome e a IA descreveu o seu negócio como: "${conhecido.ramo}".`
+        : conhecido.ramo
+          ? `A IA até respondeu, mas descreveu outro ramo ("${conhecido.ramo}"). Ela não tem informação confiável sobre você.`
+          : "Perguntei pelo nome do negócio e a IA disse que não tem informação confiável sobre ele.",
     },
     ...itensSite,
   ];

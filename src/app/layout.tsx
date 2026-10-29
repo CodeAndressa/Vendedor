@@ -50,6 +50,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="pt-BR"
+      // o script da abertura marca o <html> antes do React assumir a página
+      suppressHydrationWarning
       className={`${inter.variable} ${bricolage.variable} ${fraunces.variable} ${grotesk.variable} antialiased`}
     >
       <body className="min-h-full font-sans">

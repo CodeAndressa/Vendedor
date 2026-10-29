@@ -1,8 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
-import { ArrowUpRight, Clock, ShieldCheck, Wallet } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, ArrowUpRight, Clock, ShieldCheck, Sparkles, Wallet } from "lucide-react";
 import { projetos } from "@/lib/content";
+import { PalavrasSobem } from "./palavras";
 import { Botao, WhatsAppIcon } from "./ui";
 
 const entrada = (delay: number) => ({
@@ -13,7 +16,9 @@ const entrada = (delay: number) => ({
 
 export function Hero() {
   const reduzir = useReducedMotion();
-  const anim = (delay: number) => (reduzir ? {} : entrada(delay));
+  // se a abertura estiver na tela, o topo começa a animar quando a cortina sobe
+  const [espera] = useState(() => (typeof document !== "undefined" && document.documentElement.classList.contains("abrindo") ? 1.45 : 0));
+  const anim = (delay: number) => (reduzir ? {} : entrada(delay + espera));
 
   return (
     <section className="relative -mt-[72px] overflow-hidden bg-forest pt-[72px] text-white">
@@ -31,13 +36,13 @@ export function Hero() {
             <span className="h-px w-8 bg-lime/60" /> Sites profissionais
           </motion.span>
 
-          <motion.h1
-            {...anim(0.08)}
+          <h1
             className="mt-6 font-display text-[clamp(2.5rem,4.6vw,4.6rem)] leading-[1.02] tracking-[-0.035em] text-balance"
           >
-            Seu site no ar em 7 dias.{" "}
-            <span className="block text-lime">A partir de R$ 997, domínio incluso.</span>
-          </motion.h1>
+            <PalavrasSobem aoCarregar atraso={0.1 + espera}>
+              Seu site no ar em 7 dias. <span className="block text-lime">A partir de R$ 997, domínio incluso.</span>
+            </PalavrasSobem>
+          </h1>
 
           <motion.p {...anim(0.16)} className="mt-7 max-w-xl text-lg leading-relaxed text-white/65">
             Design, textos, versão para celular e Google, tudo publicado no seu domínio. Você me conta sobre o negócio no
@@ -57,7 +62,24 @@ export function Hero() {
             </Botao>
           </motion.div>
 
-          <motion.ul {...anim(0.32)} className="mt-12 grid max-w-xl gap-x-6 gap-y-3 text-sm text-white/70 sm:grid-cols-3">
+          <motion.div {...anim(0.3)} className="mt-8 max-w-xl">
+            <Link
+              href="/analise-ia"
+              className="group relative flex items-center gap-4 overflow-hidden rounded-2xl border border-lime/40 bg-gradient-to-r from-lime/[0.16] to-lime/[0.04] p-4 pr-5 transition hover:border-lime/80"
+            >
+              <span className="relative grid size-11 shrink-0 place-items-center rounded-xl bg-lime text-forest">
+                <Sparkles className="size-5" />
+                <span className="absolute -top-1 -right-1 size-3 animate-ping rounded-full bg-lime/80" />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block font-semibold text-white">O ChatGPT recomenda o seu negócio?</span>
+                <span className="block text-sm text-white/60">Descubra grátis em 30 segundos como a IA enxerga você.</span>
+              </span>
+              <ArrowRight className="size-5 shrink-0 text-lime transition group-hover:translate-x-1" />
+            </Link>
+          </motion.div>
+
+          <motion.ul {...anim(0.36)} className="mt-10 grid max-w-xl gap-x-6 gap-y-3 text-sm text-white/70 sm:grid-cols-3">
             {[
               { icone: Clock, texto: "1ª versão em 48h" },
               { icone: Wallet, texto: "12x sem entrada" },
@@ -124,7 +146,7 @@ function Vitrine() {
         </a>
 
         {projeto.imagemCelular && (
-          <div className="absolute -bottom-10 -left-4 w-[26%] min-w-[92px] rounded-[22px] bg-[#0d0d0d] p-1.5 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.9)] ring-1 ring-white/15 sm:-left-10">
+          <div className="absolute -bottom-10 left-2 w-[26%] min-w-[92px] rounded-[22px] bg-[#0d0d0d] p-1.5 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.9)] ring-1 ring-white/15 sm:-left-10">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={projeto.imagemCelular} alt="" className="aspect-[9/19] w-full rounded-[17px] object-cover object-top" />
           </div>
