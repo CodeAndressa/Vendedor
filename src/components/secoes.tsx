@@ -173,8 +173,8 @@ export function Garantia() {
                 Não gostou da primeira versão? <em>Não paga o resto.</em>
               </Titulo>
               <p className="mt-4 max-w-2xl text-lg text-ink-soft">
-                Se em 48 horas a primeira versão não te agradar, você não paga a segunda metade e fica com o que já viu.
-                Simples e justo para os dois lados.
+                No pagamento em duas partes (50% para começar e 50% na entrega), se a primeira versão que você vê em até 48
+                horas não te agradar, você não paga a segunda metade. Simples e justo para os dois lados.
               </p>
             </div>
           </div>
@@ -188,7 +188,7 @@ export function Seguranca() {
   const itens = [
     { icone: Lock, titulo: "Cadeado (HTTPS)", texto: "Todo o tráfego do site é criptografado, do primeiro acesso ao formulário de contato." },
     { icone: ShieldCheck, titulo: "Boas práticas OWASP", texto: "Proteção contra as falhas mais exploradas da web, como injeção de código e formulários abusados." },
-    { icone: UserCheck, titulo: "Dados conforme a LGPD", texto: "Aviso de cookies, política de privacidade e só os dados necessários, guardados com cuidado." },
+    { icone: UserCheck, titulo: "Dados conforme a LGPD", texto: "Política de privacidade, aviso de cookies quando o site usa anúncios e só os dados necessários, guardados com cuidado." },
     { icone: CreditCard, titulo: "Pagamento seguro", texto: "Cobranças pelo Asaas, instituição regulada pelo Banco Central. Nenhum dado de cartão passa pelo site." },
     { icone: KeyRound, titulo: "Acesso protegido", texto: "Áreas internas com senha, chaves fora do código e links de proposta assinados contra alteração." },
   ];

@@ -1,7 +1,7 @@
-import { chaveAdminConfere } from "@/lib/servidor";
+import { adminAutorizado } from "@/lib/servidor";
 
-// Confere a chave das telas internas (painel admin, gerador de propostas).
+// Confere a chave das telas internas (painel admin, gerador de propostas). Tentativas erradas têm limite por IP.
 export async function POST(request: Request) {
-  const ok = chaveAdminConfere(request.headers.get("x-admin-chave"));
-  return Response.json({ ok }, { status: ok ? 200 : 401 });
+  const negado = await adminAutorizado(request);
+  return negado ?? Response.json({ ok: true });
 }

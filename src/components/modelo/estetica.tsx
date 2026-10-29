@@ -103,7 +103,7 @@ function Ancora({ href, className, style, children }: { href: string; className?
 
 function LinkSeta({ children, href }: { children: ReactNode; href: string }) {
   return (
-    <Ancora href={href} className="group inline-flex items-center gap-2 border-b pb-1 text-sm font-medium tracking-[0.04em]" style={{ borderColor: LINHA }}>
+    <Ancora href={href} className="group inline-flex min-h-11 items-end gap-2 border-b pb-1 text-sm font-medium tracking-[0.04em]" style={{ borderColor: LINHA }}>
       {children}
       <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
     </Ancora>
@@ -252,6 +252,8 @@ function Hero({ modelo }: { modelo: Modelo }) {
   const { negocio } = modelo;
   const c = negocio.clinica!;
   const animar = useAnimar();
+  // miniatura (galeria, home): o título vira <p> com o mesmo visual, porque a página já tem o seu <h1>
+  const Titulo = useContext(Animar) ? motion.h1 : motion.p;
   const [antes, depois] = negocio.chamada.split(c.destaqueChamada);
   const entrar = (i: number) =>
     animar
@@ -272,7 +274,7 @@ function Hero({ modelo }: { modelo: Modelo }) {
           <motion.div {...entrar(0)}>
             <Rotulo>{modelo.segmento}</Rotulo>
           </motion.div>
-          <motion.h1
+          <Titulo
             {...entrar(1)}
             style={SERIFA}
             className="mt-7 text-[clamp(2.7rem,6.6cqw,5.6rem)] leading-[1.02] tracking-[-0.03em] text-balance"
@@ -280,7 +282,7 @@ function Hero({ modelo }: { modelo: Modelo }) {
             {antes}
             <span className="text-[var(--m-destaque)] italic">{c.destaqueChamada}</span>
             {depois}
-          </motion.h1>
+          </Titulo>
           <motion.p {...entrar(2)} className="mt-7 max-w-md text-[17px] leading-relaxed opacity-75">
             {negocio.subtitulo}
           </motion.p>
@@ -299,11 +301,9 @@ function Hero({ modelo }: { modelo: Modelo }) {
                 {[0, 1, 2, 3, 4].map((i) => (
                   <Star key={i} className="size-3.5 fill-current" />
                 ))}
-                <span className="ml-1 font-medium text-[var(--m-texto)]">{negocio.numeros[2][0]}</span>
+                <span className="ml-1 font-medium text-[var(--m-texto)]">{negocio.local?.avaliacao ?? "Sua nota do Google aqui"}</span>
               </span>
-              <span className="opacity-60">
-                {negocio.numeros[1][0]} {negocio.numeros[1][1]}
-              </span>
+              <span className="opacity-60">Espaço para avaliações reais de clientes</span>
             </span>
           </motion.div>
         </div>

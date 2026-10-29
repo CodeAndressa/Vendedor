@@ -89,7 +89,7 @@ export const faq = [
   {
     pergunta: "E se eu não gostar do resultado?",
     resposta:
-      "Você vê a primeira versão em até 48 horas. Se não gostar, não paga a segunda metade. Se gostar, faço os ajustes que você pedir até ficar do seu jeito.",
+      "Você vê a primeira versão em até 48 horas. No pagamento em duas partes (50% para começar e 50% na entrega), se não gostar, não paga a segunda metade. Se gostar, faço os ajustes que você pedir até ficar do seu jeito. Essa garantia vale para o pagamento em duas partes, não para o site por assinatura em 12x.",
   },
   {
     pergunta: "Quais as formas de pagamento?",

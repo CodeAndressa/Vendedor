@@ -10,7 +10,9 @@ import { modelos } from "@/lib/modelos";
 
 export const metadata: Metadata = {
   title: "Modelos de sites prontos para o seu negócio",
-  description: "Escolha um modelo de site ou landing page e eu adapto para o seu negócio em até 7 dias, a partir de R$ 997.",
+  description:
+    "Galeria de modelos de site e landing page para clínicas, restaurantes, advogados, salões e mais. Escolha um ponto de partida e eu adapto ao seu negócio em até 7 dias, a partir de R$ 997.",
+  alternates: { canonical: "/modelos" },
 };
 
 export default function PaginaModelos() {

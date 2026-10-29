@@ -6,6 +6,8 @@ import { ChevronDown, ExternalLink, Loader2, LogOut, RefreshCw, Search, Triangle
 import { reais } from "@/lib/config";
 import { CampoChave, useChaveAdmin } from "./chave";
 import { Faturamento, SitesProducao, VisaoGeral, VisibilidadeIA } from "./central";
+import { Emails } from "./emails";
+import { Kanban } from "./kanban";
 import { WhatsAppIcon } from "../ui";
 
 type Situacao = "novo" | "conversando" | "proposta" | "fechou" | "perdido";
@@ -221,7 +223,11 @@ export function PainelAdmin() {
         {secao === "ia" && <VisibilidadeIA chave={admin.chave} />}
         {secao === "leads" && (
         <>
-        <section className="mt-8 grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <Kanban chave={admin.chave} />
+        <Emails chave={admin.chave} />
+
+        <h2 className="mt-12 font-display text-2xl tracking-tight">Avisos do site</h2>
+        <section className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
           {numeros.map((n) => (
             <div key={n.nome} className="rounded-3xl border border-line bg-card p-5">
               <div className="text-sm text-ink-soft">{n.nome}</div>

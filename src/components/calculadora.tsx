@@ -6,6 +6,7 @@ import { Bot, CalendarClock, Check, LayoutTemplate, Lock, Newspaper, PanelsTopLe
 import * as catalogo from "@/lib/catalogo";
 import { assinaturaSite, linkWhatsApp, precos, reais } from "@/lib/config";
 import { modelos } from "@/lib/modelos";
+import { rolarAte } from "./efeitos";
 import { useIlha } from "./ilha";
 import { Checkout } from "./checkout";
 import { Reveal } from "./reveal";
@@ -90,7 +91,7 @@ export function Calculadora() {
   const escolherPlano = (p: (typeof planos)[number]) => {
     setEscolhidos(p.extras);
     avisar(`Plano ${p.nome} selecionado`, `${p.aPartirDe ? "a partir de " : ""}${reais(somar(p.extras))}`);
-    document.getElementById("calculadora")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    rolarAte(document.getElementById("calculadora"));
   };
 
   const baseEscolhida = bases.find((b) => b.id === base)!;
@@ -173,8 +174,9 @@ export function Calculadora() {
           <h3 id="calculadora" className="mb-6 scroll-mt-28 text-center font-display text-2xl">
             Ou monte do seu jeito
           </h3>
-          <div className="grid overflow-hidden rounded-[32px] border border-line bg-card shadow-[0_30px_60px_-40px_rgba(10,42,28,0.45)] lg:grid-cols-[1.25fr_0.75fr]">
-            <div className="p-6 md:p-10">
+          {/* grid-cols-1 = minmax(0, 1fr): sem isso, no celular a coluna cresce com o texto e corta os preços na borda */}
+          <div className="grid grid-cols-1 overflow-hidden rounded-[32px] border border-line bg-card shadow-[0_30px_60px_-40px_rgba(10,42,28,0.45)] lg:grid-cols-[1.25fr_0.75fr]">
+            <div className="min-w-0 p-6 md:p-10">
               <fieldset>
                 <legend className="mb-4 text-sm font-semibold tracking-wide text-ink-soft uppercase">
                   1. O que você precisa?
@@ -235,7 +237,7 @@ export function Calculadora() {
                           {ativo && <Check className="size-4" strokeWidth={3} />}
                         </span>
                         <e.icone className="size-5 shrink-0 text-ink-soft" strokeWidth={1.75} />
-                        <span className="flex-1 font-medium">
+                        <span className="min-w-0 flex-1 font-medium">
                           {e.titulo}
                         </span>
                         <span className="font-display whitespace-nowrap">+ {reais(e.valor)}</span>

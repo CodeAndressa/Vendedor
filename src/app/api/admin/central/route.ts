@@ -1,10 +1,11 @@
-import { semAcesso, semCache } from "@/lib/admin";
+import { semCache } from "@/lib/admin";
 import { ondeGuarda } from "@/lib/armazem";
 import { lerDias, ultimosDias, visitantesNoPeriodo } from "@/lib/metricas";
+import { adminAutorizado } from "@/lib/servidor";
 
 // Indicadores do funil no período: robôs de IA, visitas, engajamento, páginas, origens e conversões.
 export async function GET(request: Request) {
-  const negado = semAcesso(request);
+  const negado = await adminAutorizado(request);
   if (negado) return negado;
   const n = Math.min(Math.max(Number(new URL(request.url).searchParams.get("dias")) || 30, 1), 365);
   const dias = ultimosDias(n);

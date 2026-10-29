@@ -1,7 +1,8 @@
 import "server-only";
+import { isIP } from "node:net";
 import { connect } from "node:tls";
 import { gravarValor, lerValor } from "./armazem";
-import { baixarPagina } from "./busca-segura";
+import { baixarPagina, resolverSeguro } from "./busca-segura";
 import { enviarEmail } from "./email";
 
 // Monitor dos sites em produção (os que você entregou). Para cada um: no ar ou não, tempo de resposta,
@@ -50,9 +51,13 @@ export async function removerSite(url: string) {
   return nova;
 }
 
-function validadeCertificado(host: string): Promise<string | undefined> {
+// Passa pelo mesmo filtro da busca segura: só conecta em IP público, e no IP já conferido.
+async function validadeCertificado(host: string): Promise<string | undefined> {
+  const ip = await resolverSeguro(host);
+  if (!ip) return undefined;
+  const nome = host.replace(/^\[|\]$/g, "");
   return new Promise((resolve) => {
-    const s = connect({ host, port: 443, servername: host, timeout: 8000 }, () => {
+    const s = connect({ host: ip.address, port: 443, servername: isIP(nome) ? undefined : nome, timeout: 8000 }, () => {
       const cert = s.getPeerCertificate();
       s.end();
       resolve(cert?.valid_to ? new Date(cert.valid_to).toISOString() : undefined);

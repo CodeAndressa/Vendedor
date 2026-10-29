@@ -51,6 +51,7 @@ const colunas = [
       { href: "/#orcamento", label: "Planos e preços" },
       { href: "/#portfolio", label: "Portfólio" },
       { href: "/#duvidas", label: "Dúvidas" },
+      { href: "/privacidade", label: "Política de privacidade" },
     ],
   },
   {
@@ -65,8 +66,9 @@ const colunas = [
 ];
 
 export function Rodape() {
+  // folga embaixo (pb-48 no celular) para o menu flutuante e o botão do chat não cobrirem o fim do rodapé
   return (
-    <footer className="overflow-hidden bg-forest pt-16 pb-32 text-white">
+    <footer className="overflow-hidden bg-forest pt-16 pb-48 text-white lg:pb-32">
       <div className="mx-auto grid max-w-[1440px] gap-12 px-5 md:px-10 xl:px-16 md:grid-cols-[1.4fr_1fr_1fr_1.2fr]">
         <div>
           <Logo claro />
@@ -77,10 +79,10 @@ export function Rodape() {
         {colunas.map((c) => (
           <nav key={c.titulo} aria-label={c.titulo}>
             <div className="text-xs font-semibold tracking-[0.14em] text-lime uppercase">{c.titulo}</div>
-            <ul className="mt-4 grid gap-2.5 text-white/75">
+            <ul className="mt-3 grid text-white/75 md:mt-4 md:gap-2.5">
               {c.links.map((l) => (
                 <li key={l.label}>
-                  <Link href={l.href} className="transition hover:text-white">
+                  <Link href={l.href} className="inline-flex min-h-11 items-center transition hover:text-white md:min-h-0">
                     {l.label}
                   </Link>
                 </li>
@@ -90,41 +92,48 @@ export function Rodape() {
         ))}
         <div>
           <div className="text-xs font-semibold tracking-[0.14em] text-lime uppercase">Contato</div>
-          <ul className="mt-4 grid gap-2.5 text-white/75">
+          <ul className="mt-3 grid text-white/75 md:mt-4 md:gap-2.5">
             <li>
-              <a href={linkWhatsApp("Oi! Vim pelo seu site.")} target="_blank" rel="noopener" className="inline-flex items-center gap-2 hover:text-white">
+              <a
+                href={linkWhatsApp("Oi! Vim pelo seu site e quero saber mais sobre um site para o meu negócio.")}
+                target="_blank"
+                rel="noopener"
+                aria-label={`Chamar no WhatsApp: ${config.whatsappVisivel}`}
+                className="inline-flex min-h-11 items-center gap-2 hover:text-white md:min-h-0"
+              >
                 <WhatsAppIcon className="size-4" /> {config.whatsappVisivel}
               </a>
             </li>
             {config.email && (
               <li>
-                <a href={`mailto:${config.email}`} className="hover:text-white">
+                <a href={`mailto:${config.email}`} className="inline-flex min-h-11 items-center hover:text-white md:min-h-0">
                   {config.email}
                 </a>
               </li>
             )}
             {config.instagram && (
               <li>
-                <a href={config.instagram} target="_blank" rel="noopener" className="hover:text-white">
+                <a href={config.instagram} target="_blank" rel="noopener" className="inline-flex min-h-11 items-center hover:text-white md:min-h-0">
                   Instagram
                 </a>
               </li>
             )}
-            <li className="text-white/50">{config.cidade}</li>
+            <li className="py-2.5 text-white/60 md:py-0">{config.cidade}</li>
           </ul>
         </div>
       </div>
 
-      <nav aria-label="Sites por segmento" className="mx-auto mt-12 max-w-[1440px] px-5 md:px-10 xl:px-16 text-sm text-white/50">
-        <span className="mr-2 font-semibold text-white/70">Sites para:</span>
-        {nichos.map((n, i) => (
-          <span key={n.slug}>
-            <Link href={`/para/${n.slug}`} className="hover:text-white">
-              {n.nome}
-            </Link>
-            {i < nichos.length - 1 && " · "}
-          </span>
-        ))}
+      <nav aria-label="Sites por segmento" className="mx-auto mt-12 max-w-[1440px] px-5 text-sm text-white/65 md:px-10 xl:px-16">
+        <span className="font-semibold text-white/80">Sites para:</span>
+        <ul className="mt-2 flex flex-wrap gap-x-4 md:mt-1 md:gap-y-1">
+          {nichos.map((n) => (
+            <li key={n.slug}>
+              <Link href={`/para/${n.slug}`} className="inline-flex min-h-11 items-center hover:text-white md:min-h-0">
+                {n.nome}
+              </Link>
+            </li>
+          ))}
+        </ul>
       </nav>
 
       {/* nome gigante no rodapé, cortado na base */}
@@ -134,7 +143,7 @@ export function Rodape() {
       >
         {config.marca.split(" ")[0]}
       </div>
-      <div className="mx-auto mt-6 flex max-w-[1440px] flex-wrap justify-between gap-3 border-t border-white/10 px-5 md:px-10 xl:px-16 pt-6 text-sm text-white/50">
+      <div className="mx-auto mt-6 flex max-w-[1440px] flex-wrap justify-between gap-3 border-t border-white/10 px-5 md:px-10 xl:px-16 pt-6 text-sm text-white/60">
         <span>© {config.marca}</span>
         <span>Feito com cuidado em {config.cidade.split(",")[0]}</span>
       </div>

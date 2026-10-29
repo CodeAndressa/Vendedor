@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Loader2, Lock, X } from "lucide-react";
 import { linkWhatsApp } from "@/lib/config";
@@ -39,6 +39,16 @@ export function Checkout({
   const [erro, setErro] = useState("");
   const [aceite, setAceite] = useState(false);
   const docOk = documentoValido(documento);
+
+  // Esc fecha a janela
+  useEffect(() => {
+    if (!aberto) return;
+    const tecla = (e: KeyboardEvent) => {
+      if (e.key === "Escape") fechar();
+    };
+    window.addEventListener("keydown", tecla);
+    return () => window.removeEventListener("keydown", tecla);
+  }, [aberto, fechar]);
 
   const pagar = async () => {
     setErro("");
@@ -83,7 +93,7 @@ export function Checkout({
                 <div className="text-sm text-ink-soft">{titulo}</div>
                 <div className="font-display text-3xl">{valor}</div>
               </div>
-              <button type="button" onClick={fechar} aria-label="Fechar" className="grid size-10 place-items-center rounded-full border border-line">
+              <button type="button" onClick={fechar} aria-label="Fechar a janela de pagamento" className="grid size-11 shrink-0 place-items-center rounded-full border border-line">
                 <X className="size-4" />
               </button>
             </div>

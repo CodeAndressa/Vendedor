@@ -42,21 +42,22 @@ export function IlhaProvider({ children }: { children: ReactNode }) {
               animate={reduzir ? { opacity: 1 } : { width: "auto", height: "auto", opacity: 1, borderRadius: 28 }}
               exit={reduzir ? { opacity: 0 } : { width: 120, height: 36, opacity: 0, borderRadius: 999 }}
               transition={{ type: "spring", stiffness: 380, damping: 32 }}
-              className="overflow-hidden bg-black text-white shadow-[0_18px_40px_-12px_rgba(0,0,0,0.55)]"
+              className="max-w-full overflow-hidden bg-black text-white shadow-[0_18px_40px_-12px_rgba(0,0,0,0.55)] sm:max-w-md"
             >
               <motion.div
                 key={aviso.id}
                 initial={{ opacity: 0, filter: "blur(6px)" }}
                 animate={{ opacity: 1, filter: "blur(0px)" }}
                 transition={{ delay: 0.08, duration: 0.25 }}
-                className="flex items-center gap-3 py-2.5 pr-5 pl-2.5 whitespace-nowrap"
+                // no celular o texto quebra em até duas linhas (com reticências) em vez de sair da tela
+                className="flex min-w-0 items-center gap-3 py-2.5 pr-5 pl-2.5"
               >
                 <span className="grid size-8 shrink-0 place-items-center rounded-full bg-lime text-forest">
                   <Check className="size-4" strokeWidth={3} />
                 </span>
-                <span className="text-sm leading-tight">
-                  <span className="block font-semibold">{aviso.titulo}</span>
-                  {aviso.detalhe && <span className="text-white/60">{aviso.detalhe}</span>}
+                <span className="min-w-0 text-sm leading-tight">
+                  <span className="line-clamp-2 block font-semibold">{aviso.titulo}</span>
+                  {aviso.detalhe && <span className="line-clamp-2 block text-white/70">{aviso.detalhe}</span>}
                 </span>
               </motion.div>
             </motion.div>

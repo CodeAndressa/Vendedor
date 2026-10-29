@@ -59,6 +59,23 @@ h3 em {
   font-style: normal;
 }
 
+/* foco do teclado visível em qualquer fundo: anel verde-escuro por dentro e dourado por fora.
+   :where() deixa a especificidade zero, então os componentes podem trocar o estilo. */
+:where(a, button, summary, select, [role="button"], [role="option"], [tabindex]:not([tabindex="-1"])):focus-visible {
+  outline: 2px solid var(--color-forest);
+  outline-offset: 0;
+  box-shadow: 0 0 0 4px var(--color-lime);
+}
+:where(input[type="checkbox"], input[type="radio"]):focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+/* rótulos que envolvem um input escondido (cartões da calculadora) mostram o foco no cartão inteiro */
+label:has(> input.sr-only:focus-visible) {
+  outline: 2px solid var(--color-forest);
+  box-shadow: 0 0 0 4px var(--color-lime);
+}
+
 ::selection {
   background: var(--color-lime);
   color: var(--color-forest);
@@ -116,7 +133,8 @@ h3 em {
   gap: 26px;
   background: #0b1d15;
   clip-path: inset(0 0 0 0);
-  animation: abertura-sai 0.95s cubic-bezier(0.76, 0, 0.24, 1) 1.35s forwards;
+  /* total de ~1,4 s: letras e linha até 0,8 s, cortina sobe em 0,6 s */
+  animation: abertura-sai 0.6s cubic-bezier(0.76, 0, 0.24, 1) 0.8s forwards;
 }
 html.ja-abriu .abertura {
   display: none;
@@ -157,7 +175,7 @@ html.abrindo {
   background: #d9c28e;
   transform: scaleX(0);
   transform-origin: left;
-  animation: abertura-linha 1.15s cubic-bezier(0.65, 0, 0.35, 1) 0.15s forwards;
+  animation: abertura-linha 0.65s cubic-bezier(0.65, 0, 0.35, 1) 0.1s forwards;
 }
 @keyframes abertura-letra {
   to { opacity: 1; }

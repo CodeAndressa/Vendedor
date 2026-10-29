@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, useReducedMotion } from "motion/react";
 import { BriefcaseBusiness, CircleHelp, House, LayoutGrid, Sparkles, Tag } from "lucide-react";
+import { rolarAoTopo, rolarAte } from "./efeitos";
 
 // Menu flutuante no rodapé da tela (inspirado no Prisma): pílula com ícones e rótulos,
 // e um círculo verde no item ativo. Na home ele acompanha a seção que está na tela.
@@ -47,9 +48,10 @@ export function Dock() {
       initial={reduzir ? false : { y: 90, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ delay: 0.6, type: "spring", stiffness: 220, damping: 24 }}
-      className="fixed inset-x-0 bottom-3 z-50 flex justify-center px-2 sm:bottom-5 print:hidden"
+      // a faixa do <nav> ocupa a largura toda: só a pílula recebe cliques, o resto da faixa deixa passar
+      className="pointer-events-none fixed inset-x-0 bottom-3 z-50 flex justify-center px-2 sm:bottom-5 print:hidden"
     >
-      <ul className="flex items-center gap-0.5 rounded-full border border-ink/10 bg-card/90 p-1.5 shadow-[0_20px_50px_-18px_rgba(8,30,20,0.45)] backdrop-blur-xl sm:gap-1">
+      <ul className="pointer-events-auto flex items-center gap-0.5 rounded-full border border-ink/10 bg-card/90 p-1.5 shadow-[0_20px_50px_-18px_rgba(8,30,20,0.45)] backdrop-blur-xl sm:gap-1">
         {itens.map(({ id, href, rotulo, icone: Icone, ...resto }) => {
           const esteAtivo = ativo === id;
           const destaque = "destaque" in resto && resto.destaque;
@@ -58,8 +60,17 @@ export function Dock() {
               <Link
                 href={href}
                 aria-current={esteAtivo ? "page" : undefined}
-                className={`relative flex w-[54px] flex-col items-center gap-0.5 rounded-full py-1.5 text-[10.5px] font-medium transition sm:w-[68px] sm:text-[11px] ${
-                  esteAtivo ? "text-white" : destaque ? "text-[#9C7B3C] hover:text-[#7A5E2A]" : "text-ink-soft hover:text-ink"
+                data-rolagem-propria
+                onClick={(e) => {
+                  const [pagina, ancora] = href.split("#");
+                  if (pagina !== caminho) return; // outra página: o Next navega e a RolagemDaNavegacao posiciona
+                  // mesma página: rola daqui mesmo, com o deslocamento do cabeçalho ("Início" e a própria página = topo)
+                  e.preventDefault();
+                  if (!ancora || ancora === "inicio") rolarAoTopo();
+                  else rolarAte(document.getElementById(ancora));
+                }}
+                className={`relative flex min-h-11 w-[54px] flex-col items-center justify-center gap-0.5 rounded-full py-1.5 text-[10.5px] font-medium transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand sm:w-[68px] sm:text-[11px] ${
+                  esteAtivo ? "text-white" : destaque ? "text-[#7A5E2A] hover:text-[#5E4820]" : "text-ink-soft hover:text-ink"
                 }`}
               >
                 {esteAtivo && (

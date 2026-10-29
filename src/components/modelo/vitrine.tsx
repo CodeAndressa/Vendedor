@@ -91,7 +91,7 @@ export function Vitrine({ itens, total }: { itens: { modelo: Modelo; previa: Rea
                 Escolha um ponto de partida. <span className="text-lime">Eu adapto ao seu negócio.</span>
               </Titulo>
             </div>
-            <Link href="/modelos" className="inline-flex items-center gap-2 font-semibold text-lime hover:underline">
+            <Link href="/modelos" className="inline-flex min-h-11 items-center gap-2 font-semibold text-lime hover:underline">
               Ver galeria completa <ArrowRight className="size-4" />
             </Link>
           </div>

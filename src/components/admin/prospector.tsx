@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useSyncExternalStore } from "react";
-import { CheckCircle2, Download, FileText, Loader2, MapPin, Phone, Search, Star, XCircle } from "lucide-react";
+import { CheckCircle2, Download, FileText, KanbanSquare, Loader2, MapPin, Phone, Search, Star, XCircle } from "lucide-react";
 import type { Prospecto } from "@/lib/prospeccao";
 import { config } from "@/lib/config";
 import { nichos } from "@/lib/nichos";
@@ -98,6 +98,9 @@ export function Prospector() {
   const [lista, setLista] = useState<Prospecto[] | null>(null);
   const [resumo, setResumo] = useState<Resumo | null>(null);
   const [esconderContatados, setEsconderContatados] = useState(true);
+  const [noKanban, setNoKanban] = useState<Set<string>>(new Set());
+  const [enviandoKanban, setEnviandoKanban] = useState<string | null>(null);
+  const [avisoKanban, setAvisoKanban] = useState<{ ok: boolean; texto: string } | null>(null);
   const contatados = new Set<string>(
     JSON.parse(
       useSyncExternalStore(
@@ -128,6 +131,24 @@ export function Prospector() {
     }
     setLista(json.lista);
     setResumo(json.resumo);
+  };
+
+  // Manda empresas do robô para o kanban da Central (quem já estiver lá só é atualizado)
+  const mandarProKanban = async (itens: Prospecto[], qual: string) => {
+    if (!itens.length) return;
+    setEnviandoKanban(qual);
+    setAvisoKanban(null);
+    const r = await fetch("/api/admin/kanban", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-admin-chave": admin.chave },
+      body: JSON.stringify({ acao: "adicionar", cartoes: itens }),
+    }).catch(() => null);
+    const json = r ? await r.json().catch(() => null) : null;
+    setEnviandoKanban(null);
+    if (!json?.ok) return setAvisoKanban({ ok: false, texto: json?.erro ?? "Não consegui mandar pro kanban." });
+    setNoKanban((s) => new Set([...s, ...itens.map((p) => p.id)]));
+    const n = (v: number, um: string, varios: string) => `${v} ${v === 1 ? um : varios}`;
+    setAvisoKanban({ ok: true, texto: `No kanban: ${n(json.criados ?? 0, "novo", "novos")}, ${n(json.atualizados ?? 0, "atualizado", "atualizados")}.` });
   };
 
   const visiveis = (lista ?? []).filter((p) => !esconderContatados || !contatados.has(p.id));
@@ -202,10 +223,29 @@ export function Prospector() {
               <input type="checkbox" checked={esconderContatados} onChange={(e) => setEsconderContatados(e.target.checked)} className="size-4 accent-[var(--color-brand)]" />
               Esconder já contatados
             </label>
+            <button
+              type="button"
+              onClick={() => mandarProKanban(visiveis, "todos")}
+              disabled={!!enviandoKanban || !visiveis.length}
+              className="inline-flex items-center gap-1.5 rounded-full bg-forest px-3 py-1.5 font-semibold text-white disabled:opacity-40"
+            >
+              {enviandoKanban === "todos" ? <Loader2 className="size-4 animate-spin" /> : <KanbanSquare className="size-4" />} Mandar todos pro kanban
+            </button>
             <button type="button" onClick={() => baixarCsv(lista)} className="inline-flex items-center gap-1.5 rounded-full border border-line bg-card px-3 py-1.5 font-semibold">
               <Download className="size-4" /> Planilha (CSV)
             </button>
           </div>
+
+          {avisoKanban && (
+            <p className={`rounded-2xl p-4 text-sm font-semibold ${avisoKanban.ok ? "bg-brand-soft text-brand-dark" : "bg-red-50 text-red-800"}`}>
+              {avisoKanban.texto}{" "}
+              {avisoKanban.ok && (
+                <a href="/admin" className="underline underline-offset-2">
+                  Abrir a Central
+                </a>
+              )}
+            </p>
+          )}
 
           <ol className="grid gap-4">
             {visiveis.map((p, i) => (
@@ -261,6 +301,15 @@ export function Prospector() {
                   <a href={linkProposta(p)} target="_blank" rel="noopener" className="flex min-h-11 items-center justify-center gap-2 rounded-full bg-forest text-sm font-semibold text-white">
                     <FileText className="size-4" /> Proposta com prévia
                   </a>
+                  <button
+                    type="button"
+                    onClick={() => mandarProKanban([p], p.id)}
+                    disabled={!!enviandoKanban}
+                    className="flex min-h-11 items-center justify-center gap-2 rounded-full border border-line text-sm font-semibold disabled:opacity-50"
+                  >
+                    {enviandoKanban === p.id ? <Loader2 className="size-4 animate-spin" /> : noKanban.has(p.id) ? <CheckCircle2 className="size-4 text-brand" /> : <KanbanSquare className="size-4" />}
+                    {noKanban.has(p.id) ? "Está no kanban" : "Mandar pro kanban"}
+                  </button>
                   {p.maps && (
                     <a href={p.maps} target="_blank" rel="noopener" className="flex min-h-11 items-center justify-center gap-2 rounded-full border border-line text-sm font-semibold">
                       <MapPin className="size-4" /> Ver no Maps

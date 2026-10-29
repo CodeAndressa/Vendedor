@@ -1,20 +1,23 @@
-import { classificarOrigem, identificarRobo, somar } from "@/lib/metricas";
+import { ipDe, limitar } from "@/lib/limite";
+import { caminhoConhecido, classificarOrigem, identificarRobo, somar } from "@/lib/metricas";
 
 // Recebe as medições do navegador (página vista, tempo e rolagem, eventos). Só contadores, sem dado pessoal.
 
 const texto = (v: unknown, max = 120) => (typeof v === "string" ? v.slice(0, max) : "");
-const caminhoLimpo = (p: string) => (/^\/[\w\-/.]*$/.test(p) ? p.replace(/\/+$/, "") || "/" : "/outros");
-const eventosAceitos = new Set(["whatsapp", "cta_analise", "chat", "orcamento", "proposta", "lead", "contato", "diagnostico"]);
+// "lead", "proposta_aberta" e "checkout" são contados pelo servidor (em notificar), nunca pelo navegador.
+const eventosAceitos = new Set(["whatsapp", "cta_analise", "chat", "orcamento", "proposta", "contato", "diagnostico"]);
 
 export async function POST(request: Request) {
   const ua = request.headers.get("user-agent") ?? "";
   if (identificarRobo(ua) || /bot|crawl|spider|headless/i.test(ua)) return new Response(null, { status: 204 });
+  // limite leve: 120 medições a cada 10 minutos por IP (uma pessoa navegando manda bem menos)
+  if (!(await limitar("metrica-ip", ipDe(request), 120, 600)).ok) return new Response(null, { status: 204 });
 
   const c = (await request.json().catch(() => null)) as Record<string, unknown> | null;
-  if (!c) return new Response(null, { status: 400 });
+  if (!c || typeof c !== "object") return new Response(null, { status: 400 });
   const visitante = /^[a-z0-9]{8,24}$/.test(texto(c.v, 24)) ? texto(c.v, 24) : undefined;
-  const pagina = caminhoLimpo(texto(c.p, 80));
-  if (pagina.startsWith("/admin")) return new Response(null, { status: 204 });
+  if (texto(c.p, 120).startsWith("/admin")) return new Response(null, { status: 204 });
+  const pagina = caminhoConhecido(texto(c.p, 120));
 
   try {
     if (c.t === "vista") {

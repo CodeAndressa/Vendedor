@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
+import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ArrowLeft, ArrowRight, Check, FileText, Loader2, Sparkles } from "lucide-react";
 import { bases, extras, total, type Base, type Extra } from "@/lib/catalogo";
@@ -198,9 +199,14 @@ export function Diagnostico() {
           <input value={negocio} onChange={(e) => setNegocio(e.target.value)} placeholder="Nome do negócio (opcional)" aria-label="Nome do negócio" className={campo} />
           {/* campo escondido contra robôs */}
           <input value={armadilha} onChange={(e) => setArmadilha(e.target.value)} tabIndex={-1} autoComplete="off" aria-hidden className="hidden" name="site" />
-          <label className="flex items-start gap-3 text-sm text-ink-soft">
-            <input type="checkbox" checked={aceite} onChange={(e) => setAceite(e.target.checked)} className="mt-0.5 size-4 accent-[var(--color-brand)]" />
-            Autorizo receber a proposta e o contato pelo WhatsApp. Seus dados não são compartilhados.
+          <label className="flex cursor-pointer items-start gap-3 text-sm text-ink-soft">
+            <input type="checkbox" checked={aceite} onChange={(e) => setAceite(e.target.checked)} className="mt-0.5 size-4 shrink-0 accent-[var(--color-brand)]" />
+            <span>
+              Autorizo receber a proposta e o contato pelo WhatsApp. Seus dados são usados só para te responder.{" "}
+              <Link href="/privacidade" target="_blank" className="font-semibold text-brand-dark underline underline-offset-2">
+                Política de privacidade
+              </Link>
+            </span>
           </label>
           <button
             type="submit"
@@ -239,7 +245,7 @@ export function Diagnostico() {
         <div className="overflow-hidden rounded-[32px] border border-line bg-bg-alt p-6 md:p-10">
           <div className="mb-8 flex items-center gap-4">
             {passo > 0 && passo < 4 && (
-              <button type="button" onClick={() => ir(passo - 1)} aria-label="Voltar" className="grid size-10 place-items-center rounded-full border border-line bg-card">
+              <button type="button" onClick={() => ir(passo - 1)} aria-label="Voltar para a pergunta anterior" className="grid size-11 place-items-center rounded-full border border-line bg-card">
                 <ArrowLeft className="size-4" />
               </button>
             )}

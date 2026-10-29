@@ -29,7 +29,7 @@ export function Header({ escuro = false }: { escuro?: boolean }) {
         } ${sobreEscuro ? "text-white" : ""}`}
       >
         <div className="mx-auto flex h-[72px] max-w-[1440px] items-center justify-between gap-4 px-5 md:px-10 xl:px-16">
-          <Link href="/" aria-label={`${config.marca}, página inicial`}>
+          <Link href="/" aria-label={`${config.marca}, página inicial`} className="inline-flex min-h-11 items-center">
             <Logo claro={sobreEscuro} digitar />
           </Link>
 
@@ -37,20 +37,21 @@ export function Header({ escuro = false }: { escuro?: boolean }) {
             <Link
               href="/analise-ia"
               data-escuro={sobreEscuro}
-              className="brilho hidden items-center gap-1.5 rounded-full border border-lime/50 bg-lime/15 px-3.5 py-2 text-sm font-semibold text-[#9C7B3C] transition hover:bg-lime/25 data-[escuro=true]:text-lime md:inline-flex"
+              className="brilho hidden items-center gap-1.5 rounded-full border border-lime/50 bg-lime/15 px-3.5 py-2 text-sm font-semibold text-[#7A5E2A] transition hover:bg-lime/25 data-[escuro=true]:text-lime md:inline-flex"
             >
-              <Sparkles className="size-3.5" /> Como a IA te vê?
+              <Sparkles className="size-3.5" aria-hidden /> Como a IA te vê?
             </Link>
             <span className="hidden sm:block">
-              <Botao mensagem="Oi! Vim pelo seu site e quero um orçamento." className="!min-h-10 !px-5 !py-2 text-sm">
+              <Botao mensagem="Oi! Vim pelo seu site e quero um orçamento para o meu negócio." className="!min-h-11 !px-5 !py-2 text-sm">
                 <WhatsAppIcon className="size-4" /> Pedir orçamento
               </Botao>
             </span>
             <a
-              href={linkWhatsApp("Oi! Vim pelo seu site e quero um orçamento.")}
+              href={linkWhatsApp("Oi! Vim pelo seu site e quero um orçamento para o meu negócio.")}
               target="_blank"
               rel="noopener"
-              aria-label="Pedir orçamento no WhatsApp"
+              aria-label="Pedir orçamento no WhatsApp (abre em nova aba)"
+              title="Pedir orçamento no WhatsApp"
               className="grid size-11 place-items-center rounded-full bg-brand text-white sm:hidden"
             >
               <WhatsAppIcon className="size-5" />

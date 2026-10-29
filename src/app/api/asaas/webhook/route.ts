@@ -1,4 +1,5 @@
 import { timingSafeEqual } from "node:crypto";
+import { marcarCarrinhoPago } from "@/lib/carrinho";
 import { notificar } from "@/lib/servidor";
 
 // Recebe os avisos do Asaas (pagamento confirmado, atrasado, assinatura cancelada...)
@@ -42,6 +43,8 @@ export async function POST(request: Request) {
       forma: evento.payment?.billingType,
       link: evento.payment?.invoiceUrl,
     });
+    if ((evento.event === "PAYMENT_RECEIVED" || evento.event === "PAYMENT_CONFIRMED") && dados.externalReference)
+      await marcarCarrinhoPago(dados.externalReference).catch((e) => console.error("Carrinho não fechado", e));
   }
   // Responder 200 sempre: o Asaas pausa a fila de avisos se recebe erro.
   return Response.json({ recebido: true });

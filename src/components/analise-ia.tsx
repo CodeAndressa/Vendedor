@@ -6,7 +6,8 @@ import { AnimatePresence, motion } from "motion/react";
 import { ArrowRight, Check, Loader2, RotateCcw, Sparkles, X } from "lucide-react";
 import { config, linkWhatsApp } from "@/lib/config";
 import { segmentos } from "@/lib/segmentos";
-import { evento } from "@/lib/rastreio";
+import { evento, lerOrigem } from "@/lib/rastreio";
+import { rolarAte } from "./efeitos";
 import { LogoSimbolo } from "./logo";
 import { WhatsAppIcon } from "./ui";
 
@@ -15,18 +16,12 @@ type Resultado = { nota: number; pergunta: string; indicados: string[]; apareceu
 
 const campo =
   "min-h-12 w-full rounded-xl border border-white/12 bg-white/[0.04] px-4 text-white placeholder:text-white/35 outline-none transition focus:border-lime/70 focus:bg-white/[0.07]";
-const etapas = ["Perguntando para a IA como um cliente", "Lendo o seu site", "Conferindo os robôs das buscas", "Calculando a sua nota"];
-
-function utm() {
-  try {
-    return JSON.parse(sessionStorage.getItem("utm") ?? "{}");
-  } catch {
-    return {};
-  }
-}
+const emailValido = (v: string) => /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(v.trim());
+const etapas = ["Simulando a pergunta de um cliente para a IA", "Lendo o seu site", "Conferindo os robôs das buscas", "Calculando a sua nota"];
 
 export function AnaliseIA() {
-  const [dados, setDados] = useState({ negocio: "", segmento: "", cidade: "", site: "", nome: "", whatsapp: "", empresa: "" });
+  const [dados, setDados] = useState({ negocio: "", segmento: "", cidade: "", site: "", nome: "", email: "", whatsapp: "", empresa: "" });
+  const [emailEnviado, setEmailEnviado] = useState(false);
   const [consentimento, setConsentimento] = useState(false);
   const [enviando, setEnviando] = useState(false);
   const [etapa, setEtapa] = useState(0);
@@ -48,7 +43,8 @@ export function AnaliseIA() {
     const r = await fetch("/api/analise-ia", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...dados, consentimento, utm: utm() }),
+      // origem da visita (anúncio, Google...) gravada na primeira página por registrarOrigem()
+      body: JSON.stringify({ ...dados, email: dados.email.trim(), consentimento, utm: lerOrigem() }),
     }).catch(() => null);
     const json = r ? await r.json().catch(() => null) : null;
     // deixa a animação respirar um pouco: a análise é rápida demais para parecer séria
@@ -56,15 +52,25 @@ export function AnaliseIA() {
     setEnviando(false);
     if (!json?.ok) return setErro(json?.erro ?? "Não consegui fazer a análise agora. Tente de novo.");
     evento("lead", { origem: "analise-ia" });
+    setEmailEnviado(json.emailEnviado === true);
     setResultado(json.resultado);
-    requestAnimationFrame(() => document.getElementById("resultado-ia")?.scrollIntoView({ behavior: "smooth", block: "start" }));
+    requestAnimationFrame(() => rolarAte(document.getElementById("resultado-ia")));
   };
 
   const pode =
     dados.negocio.trim().length > 1 && dados.segmento.trim().length > 2 && dados.cidade.trim().length > 2 &&
-    dados.nome.trim().length > 1 && dados.whatsapp.replace(/\D/g, "").length >= 10 && consentimento;
+    dados.nome.trim().length > 1 && emailValido(dados.email) && dados.whatsapp.replace(/\D/g, "").length >= 10 && consentimento;
 
-  if (resultado) return <Relatorio resultado={resultado} negocio={dados.negocio} cidade={dados.cidade} refazer={() => setResultado(null)} />;
+  if (resultado)
+    return (
+      <Relatorio
+        resultado={resultado}
+        negocio={dados.negocio}
+        cidade={dados.cidade}
+        email={emailEnviado ? dados.email.trim() : ""}
+        refazer={() => setResultado(null)}
+      />
+    );
 
   return (
     <form
@@ -99,15 +105,31 @@ export function AnaliseIA() {
             <input value={dados.site} onChange={muda("site")} placeholder="Site ou Instagram (opcional)" aria-label="Site" inputMode="url" className={campo} />
             <div className="mt-3 text-[11px] font-medium tracking-[0.22em] text-lime uppercase">Para onde mando o resultado</div>
             <div className="grid gap-3 sm:grid-cols-2">
-              <input value={dados.nome} onChange={muda("nome")} placeholder="Seu nome" aria-label="Seu nome" autoComplete="name" className={campo} />
-              <input value={dados.whatsapp} onChange={muda("whatsapp")} placeholder="WhatsApp com DDD" aria-label="WhatsApp" inputMode="tel" autoComplete="tel" className={campo} />
+              <input value={dados.nome} onChange={muda("nome")} placeholder="Seu nome" aria-label="Seu nome" autoComplete="name" className={`${campo} sm:col-span-2`} />
+              <input
+                type="email"
+                value={dados.email}
+                onChange={muda("email")}
+                placeholder="Seu e-mail (recebe o relatório)"
+                aria-label="E-mail para receber o relatório"
+                autoComplete="email"
+                inputMode="email"
+                required
+                aria-invalid={dados.email.trim() !== "" && !emailValido(dados.email)}
+                className={campo}
+              />
+              <input value={dados.whatsapp} onChange={muda("whatsapp")} placeholder="WhatsApp com DDD" aria-label="WhatsApp com DDD" inputMode="tel" autoComplete="tel" className={campo} />
             </div>
+            <p className="text-[13px] leading-snug text-white/60">
+              O relatório completo vai para o seu e-mail. O WhatsApp é para eu falar com você, se quiser ajuda para corrigir.
+            </p>
             <input value={dados.empresa} onChange={muda("empresa")} tabIndex={-1} autoComplete="off" aria-hidden className="hidden" />
-            <label className="mt-1 flex cursor-pointer items-start gap-3 text-sm leading-relaxed text-white/60">
+            <label className="mt-1 flex cursor-pointer items-start gap-3 text-sm leading-relaxed text-white/70">
               <input type="checkbox" checked={consentimento} onChange={(e) => setConsentimento(e.target.checked)} className="mt-1 size-4 shrink-0 accent-[#D9C28E]" />
               <span>
-                Autorizo a {config.nome.split(" ")[0]} a falar comigo pelo WhatsApp sobre a análise. Veja a{" "}
-                <Link href="/privacidade" className="underline underline-offset-2 hover:text-white">
+                Autorizo receber o relatório da análise por e-mail e ser contatado pela {config.nome.split(" ")[0]} por WhatsApp
+                ou e-mail sobre ele. Veja a{" "}
+                <Link href="/privacidade" target="_blank" className="underline underline-offset-2 hover:text-white">
                   política de privacidade
                 </Link>
                 .
@@ -134,7 +156,20 @@ function corDaNota(nota: number) {
   return { cor: "#F07D6B", texto: "Quase invisível para a IA" };
 }
 
-function Relatorio({ resultado, negocio, cidade, refazer }: { resultado: Resultado; negocio: string; cidade: string; refazer: () => void }) {
+// `email` só vem preenchido quando o servidor confirmou o envio (emailEnviado); sem ele, não promete e-mail.
+function Relatorio({
+  resultado,
+  negocio,
+  cidade,
+  email,
+  refazer,
+}: {
+  resultado: Resultado;
+  negocio: string;
+  cidade: string;
+  email: string;
+  refazer: () => void;
+}) {
   const { cor, texto } = corDaNota(resultado.nota);
   const faltam = resultado.itens.filter((i) => !i.ok);
   const raio = 52;
@@ -143,6 +178,14 @@ function Relatorio({ resultado, negocio, cidade, refazer }: { resultado: Resulta
 
   return (
     <div id="resultado-ia" className="grid gap-5">
+      {email && (
+        <p role="status" className="flex items-start gap-2.5 rounded-2xl border border-emerald-400/30 bg-emerald-400/10 px-4 py-3 text-sm text-emerald-100">
+          <Check className="mt-0.5 size-4 shrink-0 text-emerald-300" aria-hidden />
+          <span>
+            Mandei o relatório para <strong className="text-white">{email}</strong>. Confira também o spam.
+          </span>
+        </p>
+      )}
       <div className="flex flex-wrap items-center gap-6 rounded-[28px] border border-white/10 bg-white/[0.03] p-6 md:p-8">
         <svg viewBox="0 0 120 120" className="size-32 shrink-0 -rotate-90">
           <circle cx="60" cy="60" r={raio} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="10" />

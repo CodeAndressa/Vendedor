@@ -1,9 +1,9 @@
 import { buscarNegocios } from "@/lib/prospeccao";
-import { chaveAdminConfere } from "@/lib/servidor";
+import { adminAutorizado } from "@/lib/servidor";
 
 export async function POST(request: Request) {
-  if (!chaveAdminConfere(request.headers.get("x-admin-chave")))
-    return Response.json({ ok: false, erro: "Chave inválida." }, { status: 401 });
+  const negado = await adminAutorizado(request);
+  if (negado) return negado;
 
   let corpo: Record<string, unknown>;
   try {

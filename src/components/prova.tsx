@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { ArrowUpRight, Check, Star } from "lucide-react";
 import { config } from "@/lib/config";
 import { depoimentosVisiveis, projetos } from "@/lib/content";
@@ -12,11 +13,11 @@ export function Portfolio() {
           <div className="max-w-2xl">
             <Eyebrow>Portfólio</Eyebrow>
             <Titulo>
-              Projetos que já estão <em>trazendo clientes</em>
+              Projeto em <em>destaque</em>
             </Titulo>
           </div>
           <p className="max-w-sm text-ink-soft">
-            Cada projeto é feito do zero para o negócio: texto, design e tecnologia pensados para vender.
+            Feito do zero para o negócio: texto, design e tecnologia pensados para transformar visita em contato.
           </p>
         </Reveal>
 
@@ -56,7 +57,8 @@ export function Portfolio() {
                         rel="noopener"
                         className="mt-9 inline-flex min-h-12 items-center gap-2 rounded-full bg-lime px-6 text-[15px] font-medium text-forest transition hover:-translate-y-0.5 hover:bg-[#E6D3A6]"
                       >
-                        Ver o site no ar <ArrowUpRight className="size-4" />
+                        Ver o site no ar <ArrowUpRight className="size-4" aria-hidden />
+                        <span className="sr-only">(abre em nova aba)</span>
                       </a>
                     )}
                   </div>
@@ -74,11 +76,12 @@ export function Portfolio() {
                       </div>
                       <div className="aspect-[16/10] overflow-hidden">
                         {p.imagem ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img
+                          <Image
                             src={p.imagem}
                             alt={`Site da ${p.cliente} no computador`}
-                            loading="lazy"
+                            width={1440}
+                            height={900}
+                            sizes="(min-width: 1024px) 760px, calc(100vw - 96px)"
                             className="size-full object-cover object-top transition duration-700 group-hover:scale-[1.02]"
                           />
                         ) : (
@@ -88,11 +91,12 @@ export function Portfolio() {
                     </div>
                     {p.imagemCelular && (
                       <div className="absolute -bottom-2 left-4 w-[24%] min-w-[96px] rounded-[22px] bg-[#111] p-1.5 shadow-[0_30px_60px_-20px_rgba(0,0,0,0.85)] ring-1 ring-white/15 lg:-bottom-8 lg:-left-8">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
+                        <Image
                           src={p.imagemCelular}
                           alt={`Site da ${p.cliente} no celular`}
-                          loading="lazy"
+                          width={780}
+                          height={1688}
+                          sizes="(min-width: 1024px) 190px, 24vw"
                           className="aspect-[9/19] w-full rounded-[17px] object-cover object-top"
                         />
                       </div>

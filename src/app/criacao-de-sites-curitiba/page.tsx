@@ -67,8 +67,8 @@ export default function PaginaCuritiba() {
       </p>
       <p>
         Eu faço o site do seu negócio do zero, com textos, design, versão para celular, botão de WhatsApp em todas as páginas
-        e configuração para as buscas. Você acompanha tudo pelo WhatsApp, vê a primeira versão em {prazos.primeiraVersao} e só
-        paga a segunda metade se gostar.
+        e configuração para as buscas. Você acompanha tudo pelo WhatsApp, vê a primeira versão em {prazos.primeiraVersao} e, no
+        pagamento em duas partes (50% + 50%), só paga a segunda metade se gostar.
       </p>
       <h2>O que está incluso</h2>
       <ul>

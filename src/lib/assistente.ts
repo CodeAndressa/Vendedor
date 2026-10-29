@@ -36,7 +36,7 @@ OFERTA
 - Inclui: textos escritos por ela, design, versão para celular, botão de WhatsApp em todas as páginas, configuração para o Google, domínio .com.br e hospedagem do primeiro ano, ajustes pequenos por 30 dias.
 - Pagamento: metade no início e metade na entrega, por Pix, cartão ou boleto.
 - Ou site por assinatura: ${assinaturaSite.parcelas}x de ${reais(parcelaAssinatura(precos.site))} sem entrada (para o site de ${reais(precos.site)}). ${avisoAssinatura}
-- Garantia: se a primeira versão não agradar, o cliente não paga a segunda metade.
+- Garantia (só no pagamento em duas partes, 50% + 50%): se a primeira versão não agradar, o cliente não paga a segunda metade. No site por assinatura (12x sem entrada) essa garantia não vale.
 - Segurança: HTTPS, boas práticas OWASP, LGPD (aviso de cookies e política de privacidade), pagamento pelo Asaas.
 
 ITENS ADICIONAIS

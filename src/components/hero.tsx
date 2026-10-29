@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight, Clock, ShieldCheck, Sparkles, Wallet } from "lucide-react";
 import { projetos } from "@/lib/content";
@@ -17,7 +18,7 @@ const entrada = (delay: number) => ({
 export function Hero() {
   const reduzir = useReducedMotion();
   // se a abertura estiver na tela, o topo começa a animar quando a cortina sobe
-  const [espera] = useState(() => (typeof document !== "undefined" && document.documentElement.classList.contains("abrindo") ? 1.45 : 0));
+  const [espera] = useState(() => (typeof document !== "undefined" && document.documentElement.classList.contains("abrindo") ? 0.85 : 0));
   const anim = (delay: number) => (reduzir ? {} : entrada(delay + espera));
 
   return (
@@ -58,7 +59,7 @@ export function Hero() {
               <WhatsAppIcon /> Quero meu site em 7 dias
             </Botao>
             <Botao href="#portfolio" variante="claro">
-              Ver sites que entreguei
+              Ver projeto entregue
             </Botao>
           </motion.div>
 
@@ -68,14 +69,14 @@ export function Hero() {
               className="group relative flex items-center gap-4 overflow-hidden rounded-2xl border border-lime/40 bg-gradient-to-r from-lime/[0.16] to-lime/[0.04] p-4 pr-5 transition hover:border-lime/80"
             >
               <span className="relative grid size-11 shrink-0 place-items-center rounded-xl bg-lime text-forest">
-                <Sparkles className="size-5" />
+                <Sparkles className="size-5" aria-hidden />
                 <span className="absolute -top-1 -right-1 size-3 animate-ping rounded-full bg-lime/80" />
               </span>
               <span className="min-w-0 flex-1">
                 <span className="block font-semibold text-white">O ChatGPT recomenda o seu negócio?</span>
                 <span className="block text-sm text-white/60">Descubra grátis em 30 segundos como a IA enxerga você.</span>
               </span>
-              <ArrowRight className="size-5 shrink-0 text-lime transition group-hover:translate-x-1" />
+              <ArrowRight className="size-5 shrink-0 text-lime transition group-hover:translate-x-1" aria-hidden />
             </Link>
           </motion.div>
 
@@ -125,6 +126,7 @@ function Vitrine() {
           href={projeto.url}
           target="_blank"
           rel="noopener"
+          aria-label={`Abrir o site da ${projeto.cliente} (abre em nova aba)`}
           className="group block overflow-hidden rounded-2xl bg-[#141414] shadow-[0_60px_120px_-40px_rgba(0,0,0,0.9)] ring-1 ring-white/10"
         >
           <div className="flex items-center gap-1.5 border-b border-white/5 px-4 py-3">
@@ -136,19 +138,30 @@ function Vitrine() {
             </span>
             <ArrowUpRight className="size-4 text-white/30 transition group-hover:text-white" />
           </div>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={projeto.imagem}
-            alt={`Site da ${projeto.cliente}, feito por mim`}
-            className="aspect-[16/10] w-full object-cover object-top"
-            fetchPriority="high"
-          />
+          {projeto.imagem && (
+            <Image
+              src={projeto.imagem}
+              alt={`Site da ${projeto.cliente}, feito por mim`}
+              width={1440}
+              height={900}
+              preload
+              fetchPriority="high"
+              sizes="(min-width: 1024px) 680px, calc(100vw - 40px)"
+              className="aspect-[16/10] w-full object-cover object-top"
+            />
+          )}
         </a>
 
         {projeto.imagemCelular && (
           <div className="absolute -bottom-10 left-2 w-[26%] min-w-[92px] rounded-[22px] bg-[#0d0d0d] p-1.5 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.9)] ring-1 ring-white/15 sm:-left-10">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={projeto.imagemCelular} alt="" className="aspect-[9/19] w-full rounded-[17px] object-cover object-top" />
+            <Image
+              src={projeto.imagemCelular}
+              alt=""
+              width={780}
+              height={1688}
+              sizes="(min-width: 1024px) 180px, 26vw"
+              className="aspect-[9/19] w-full rounded-[17px] object-cover object-top"
+            />
           </div>
         )}
       </motion.div>

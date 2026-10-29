@@ -2,6 +2,8 @@ import "server-only";
 import { appendFile, mkdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ondeGuarda, pipeline } from "./armazem";
+import { modelos } from "./modelos";
+import { nichos } from "./nichos";
 
 // Métricas do site, sem dado pessoal: só contadores por dia.
 // No Redis: um hash por dia ("m:AAAA-MM-DD", campo "chave" ou "chave|detalhe") e um HyperLogLog
@@ -92,6 +94,37 @@ export async function visitantesNoPeriodo(dias: string[]) {
     return new Set(dias.flatMap((d) => dados[d]?.v ?? [])).size;
   }
   return 0;
+}
+
+// ---------- caminhos que existem no site ----------
+// Só esses viram contador próprio; qualquer outro caminho (inventado, sondagem de robô) entra como "/outros",
+// para ninguém encher o Redis e o painel com chaves aleatórias.
+const paginasFixas = new Set([
+  "/",
+  "/analise-ia",
+  "/criacao-de-sites",
+  "/criacao-de-sites-curitiba",
+  "/como-aparecer-no-chatgpt",
+  "/modelos",
+  "/privacidade",
+  "/proposta",
+  "/resultado",
+  "/llms.txt",
+  "/robots.txt",
+  "/sitemap.xml",
+]);
+const slugsModelos = new Set(modelos.map((m) => m.slug));
+const slugsNichos = new Set(nichos.map((n) => n.slug));
+
+export function caminhoConhecido(caminho: string): string {
+  const p = caminho.split(/[?#]/)[0].replace(/\/+$/, "") || "/";
+  if (paginasFixas.has(p)) return p;
+  const [, raiz, slug, resto] = p.split("/");
+  if (resto === undefined && slug) {
+    if (raiz === "modelos" && slugsModelos.has(slug)) return p;
+    if (raiz === "para" && slugsNichos.has(slug)) return p;
+  }
+  return "/outros";
 }
 
 // ---------- classificação de origem e robôs ----------

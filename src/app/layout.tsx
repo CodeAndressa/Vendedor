@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Bricolage_Grotesque, Fraunces, Inter, Space_Grotesk } from "next/font/google";
+import { scriptAbertura } from "@/components/abertura";
+import { RolagemDaNavegacao } from "@/components/efeitos";
 import { IlhaProvider } from "@/components/ilha";
 import { Medidor } from "@/components/medidor";
 import { Rastreamento } from "@/components/rastreamento";
@@ -33,7 +35,7 @@ const grotesk = Space_Grotesk({
 
 const titulo = `Site profissional em 7 dias a partir de R$ 997 | ${config.marca}`;
 const descricao =
-  "Seu site ou landing page no ar em até 7 dias, a partir de R$ 997, com domínio .com.br incluso. Primeira versão em 48h e você só paga a segunda metade se gostar.";
+  "Seu site ou landing page no ar em até 7 dias, a partir de R$ 997, com domínio .com.br incluso. Primeira versão em 48h e, no pagamento 50% + 50%, você só paga a segunda metade se gostar.";
 
 export const metadata: Metadata = {
   title: { default: titulo, template: `%s | ${config.marca}` },
@@ -53,10 +55,16 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="pt-BR"
       // o script da abertura marca o <html> antes do React assumir a página
       suppressHydrationWarning
+      // o Next desliga a rolagem suave do CSS durante a troca de página (senão ela "escorrega" até o topo)
+      data-scroll-behavior="smooth"
       className={`${inter.variable} ${bricolage.variable} ${fraunces.variable} ${grotesk.variable} antialiased`}
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: scriptAbertura }} />
+      </head>
       <body className="min-h-full font-sans">
         <IlhaProvider>{children}</IlhaProvider>
+        <RolagemDaNavegacao />
         <Rastreamento />
         <Medidor />
       </body>

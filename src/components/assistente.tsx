@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { ArrowUp, Sparkles, X } from "lucide-react";
 import { config, linkWhatsApp } from "@/lib/config";
@@ -35,9 +36,27 @@ export function Assistente() {
   const [texto, setTexto] = useState("");
   const [pensando, setPensando] = useState(false);
   const fim = useRef<HTMLDivElement>(null);
+  const campo = useRef<HTMLInputElement>(null);
+  const lancador = useRef<HTMLButtonElement>(null);
+
+  // Esc fecha a janela e devolve o foco ao botão; no computador o cursor já vai para o campo de texto
+  useEffect(() => {
+    if (!aberto) return;
+    if (matchMedia("(pointer: fine)").matches) campo.current?.focus({ preventScroll: true });
+    const tecla = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setAberto(false);
+        lancador.current?.focus();
+      }
+    };
+    window.addEventListener("keydown", tecla);
+    return () => window.removeEventListener("keydown", tecla);
+  }, [aberto]);
 
   useEffect(() => {
-    fim.current?.scrollIntoView({ block: "end" });
+    // rola só a lista de mensagens (scrollIntoView também rolaria a página por trás)
+    const lista = fim.current?.parentElement;
+    if (lista) lista.scrollTop = lista.scrollHeight;
   }, [mensagens, pensando]);
 
   const enviar = async (pergunta: string) => {
@@ -90,9 +109,11 @@ export function Assistente() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.97 }}
             transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-x-3 bottom-[156px] z-[60] flex max-h-[min(620px,calc(100svh-120px))] flex-col overflow-hidden rounded-[24px] border border-white/10 bg-card shadow-[0_40px_90px_-30px_rgba(8,30,20,0.6)] sm:inset-x-auto sm:right-6 sm:w-[390px] lg:bottom-24"
+            data-lenis-prevent
+            // no celular a janela fica entre o topo da tela e o botão do chat, sem nunca passar da borda de cima
+            className="fixed inset-x-3 bottom-[156px] z-[60] flex max-h-[min(620px,calc(100svh-172px))] flex-col overflow-hidden rounded-[24px] border border-white/10 bg-card shadow-[0_40px_90px_-30px_rgba(8,30,20,0.6)] sm:inset-x-auto sm:right-6 sm:w-[390px] lg:bottom-24 lg:max-h-[min(620px,calc(100svh-120px))]"
           >
-            <header className="relative flex items-center gap-3 bg-forest px-5 py-4 text-white">
+            <header className="relative flex shrink-0 items-center gap-3 bg-forest px-5 py-3.5 text-white">
               <div aria-hidden className="pointer-events-none absolute -top-16 -right-10 size-40 rounded-full bg-[radial-gradient(circle,rgba(217,194,142,0.25),transparent_70%)]" />
               <LogoSimbolo className="relative size-10" />
               <div className="relative flex-1">
@@ -101,12 +122,20 @@ export function Assistente() {
                   <span className="size-1.5 rounded-full bg-emerald-400" /> Inteligência artificial · responde na hora
                 </div>
               </div>
-              <button type="button" onClick={() => setAberto(false)} aria-label="Fechar" className="relative grid size-9 place-items-center rounded-full hover:bg-white/10">
+              <button
+                type="button"
+                onClick={() => {
+                  setAberto(false);
+                  lancador.current?.focus();
+                }}
+                aria-label="Fechar o assistente"
+                className="relative grid size-11 place-items-center rounded-full hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-lime"
+              >
                 <X className="size-4" />
               </button>
             </header>
 
-            <div className="flex-1 space-y-3 overflow-y-auto bg-bg px-4 py-5 text-[15px] leading-relaxed">
+            <div className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain bg-bg px-4 py-5 text-[15px] leading-relaxed">
               {mensagens.map((m, i) =>
                 m.role === "assistant" ? (
                   <div key={i} className="max-w-[88%] rounded-2xl rounded-tl-md border border-line bg-card px-4 py-3 whitespace-pre-line text-ink">
@@ -128,18 +157,19 @@ export function Assistente() {
               )}
               {mensagens.length === 1 && (
                 <div className="flex flex-wrap gap-2 pt-1">
-                  <a
+                  <Link
                     href="/analise-ia"
-                    className="rounded-full border border-lime bg-lime/20 px-3 py-1.5 text-[13px] font-semibold text-[#8A6F33] transition hover:bg-lime/35"
+                    onClick={() => setAberto(false)}
+                    className="inline-flex min-h-11 items-center rounded-full border border-lime bg-lime/20 px-3 text-[13px] font-semibold text-[#6E5425] transition hover:bg-lime/35 sm:min-h-9"
                   >
-                    ✨ Como a IA enxerga meu negócio?
-                  </a>
+                    <Sparkles className="mr-1.5 size-3.5" aria-hidden /> Como a IA enxerga meu negócio?
+                  </Link>
                   {sugestoes.map((s) => (
                     <button
                       key={s}
                       type="button"
                       onClick={() => enviar(s)}
-                      className="rounded-full border border-brand/25 bg-brand-soft/60 px-3 py-1.5 text-[13px] text-brand-dark transition hover:border-brand"
+                      className="min-h-11 rounded-full border border-brand/25 bg-brand-soft/60 px-3 text-[13px] text-brand-dark transition hover:border-brand sm:min-h-9"
                     >
                       {s}
                     </button>
@@ -149,12 +179,12 @@ export function Assistente() {
               <div ref={fim} />
             </div>
 
-            <div className="border-t border-line bg-card p-3">
+            <div className="shrink-0 border-t border-line bg-card p-3">
               <a
                 href={whats}
                 target="_blank"
                 rel="noopener"
-                className="mb-2.5 flex min-h-10 items-center justify-center gap-2 rounded-full bg-wa/10 text-sm font-semibold text-[#128C4B] transition hover:bg-wa/20"
+                className="mb-2.5 flex min-h-11 items-center justify-center gap-2 rounded-full bg-wa/10 text-sm font-semibold text-[#128C4B] transition hover:bg-wa/20"
               >
                 <WhatsAppIcon className="size-4" /> Falar com a {primeiroNome}
               </a>
@@ -166,6 +196,7 @@ export function Assistente() {
                 className="flex items-center gap-2"
               >
                 <input
+                  ref={campo}
                   value={texto}
                   onChange={(e) => setTexto(e.target.value)}
                   maxLength={800}
@@ -176,7 +207,7 @@ export function Assistente() {
                 <button
                   type="submit"
                   disabled={!texto.trim() || pensando}
-                  aria-label="Enviar"
+                  aria-label="Enviar mensagem"
                   className="grid size-11 shrink-0 place-items-center rounded-full bg-forest text-lime transition disabled:opacity-35"
                 >
                   <ArrowUp className="size-5" />
@@ -191,6 +222,7 @@ export function Assistente() {
       </AnimatePresence>
 
       <motion.button
+        ref={lancador}
         type="button"
         onClick={() => {
           if (!aberto) enviarMetrica({ t: "evento", n: "chat" });
@@ -202,7 +234,7 @@ export function Assistente() {
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 1, type: "spring", stiffness: 260, damping: 20 }}
         whileHover={{ scale: 1.05 }}
-        className="fixed right-4 bottom-[88px] z-[60] flex h-14 items-center gap-2 rounded-full bg-forest pr-5 pl-2 text-white shadow-[0_0_0_1px_rgba(217,194,142,0.35),0_18px_40px_-12px_rgba(8,30,20,0.7)] lg:right-6 lg:bottom-6"
+        className="fixed right-4 bottom-[88px] z-[60] flex h-14 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime items-center gap-2 rounded-full bg-forest pr-5 pl-2 text-white shadow-[0_0_0_1px_rgba(217,194,142,0.35),0_18px_40px_-12px_rgba(8,30,20,0.7)] lg:right-6 lg:bottom-6"
       >
         {aberto ? (
           <span className="grid size-10 place-items-center"><X className="size-5" /></span>

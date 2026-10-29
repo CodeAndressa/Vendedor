@@ -28,7 +28,7 @@ export function Cardapio({ secoes }: { secoes: Secoes }) {
               type="button"
               aria-selected={aba === i}
               onClick={() => setAba(i)}
-              className="relative rounded-full px-5 py-2.5 text-sm font-bold"
+              className="relative min-h-11 rounded-full px-5 py-2.5 text-sm font-bold"
             >
               {aba === i && (
                 <motion.span

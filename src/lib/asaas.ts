@@ -1,4 +1,5 @@
 import "server-only";
+import { hoje } from "./proposta";
 
 // Integração com o Asaas (cobranças e assinaturas). Configure ASAAS_API_KEY e ASAAS_AMBIENTE na Vercel.
 // Comece em "sandbox" para testar; troque para "producao" quando estiver tudo certo.
@@ -29,19 +30,28 @@ export async function asaas<T>(caminho: string, metodo: "GET" | "POST" = "GET", 
   return json as T;
 }
 
-const hoje = (dias = 0) => {
-  const d = new Date();
-  d.setDate(d.getDate() + dias);
-  return d.toISOString().slice(0, 10);
-};
-
 type Cliente = { nome: string; documento: string; email?: string; celular?: string; referencia: string };
 
-// Reaproveita o cliente se o documento já estiver cadastrado no Asaas.
+// "  José  da SILVA " e "jose da silva" contam como o mesmo nome.
+export const nomeNormalizado = (nome: string) =>
+  nome
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+
+// Reaproveita o cliente do Asaas só quando documento E nome batem. O pedido vem de um visitante anônimo:
+// sem conferir o nome, qualquer um que soubesse um CPF cadastrado criaria cobranças no cadastro de outra pessoa
+// (com o e-mail e o celular dela recebendo os avisos). Se o nome não bate, cria um cliente novo.
 async function cliente(c: Cliente) {
   const doc = c.documento.replace(/\D/g, "");
-  const existente = await asaas<{ data: { id: string }[] }>(`/customers?cpfCnpj=${doc}`);
-  if (existente.data?.[0]) return existente.data[0].id;
+  const nome = nomeNormalizado(c.nome);
+  const existente = await asaas<{ data?: { id: string; name?: string; deleted?: boolean }[] }>(
+    `/customers?cpfCnpj=${encodeURIComponent(doc)}&limit=20`,
+  );
+  const mesmo = existente.data?.find((x) => !x.deleted && x.name && nomeNormalizado(x.name) === nome);
+  if (mesmo) return mesmo.id;
   const novo = await asaas<{ id: string }>("/customers", "POST", {
     name: c.nome,
     cpfCnpj: doc,

@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import Link from "next/link";
 import { PalavrasSobem } from "./palavras";
 import { linkWhatsApp } from "@/lib/config";
 
@@ -24,18 +25,20 @@ type BotaoProps = {
   className?: string;
 } & ({ mensagem: string; href?: never } | { href: string; mensagem?: never });
 
-// Botão-link. Com `mensagem`, abre o WhatsApp com o texto pronto.
+// Botão-link. Com `mensagem`, abre o WhatsApp com o texto pronto; com `href` interno, navega sem recarregar a página.
 export function Botao({ children, variante = "primario", className = "", mensagem, href }: BotaoProps) {
-  const externo = mensagem !== undefined;
+  const classes = `inline-flex min-h-12 items-center justify-center gap-2.5 rounded-full px-6 py-3 text-[15px] font-medium tracking-[-0.005em] transition duration-300 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 ${variante === "claro" || variante === "lima" ? "focus-visible:outline-lime" : "focus-visible:outline-brand"} ${variantes[variante]} ${variante === "lima" ? "brilho" : ""} ${className}`;
+  if (mensagem !== undefined) {
+    return (
+      <a data-magnetico href={linkWhatsApp(mensagem)} target="_blank" rel="noopener" className={classes}>
+        {children}
+      </a>
+    );
+  }
   return (
-    <a
-      data-magnetico
-      href={externo ? linkWhatsApp(mensagem) : href}
-      {...(externo ? { target: "_blank", rel: "noopener" } : {})}
-      className={`inline-flex min-h-12 items-center justify-center gap-2.5 rounded-full px-6 py-3 text-[15px] font-medium tracking-[-0.005em] transition duration-300 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${variantes[variante]} ${variante === "lima" ? "brilho" : ""} ${className}`}
-    >
+    <Link data-magnetico href={href} className={classes}>
       {children}
-    </a>
+    </Link>
   );
 }
 

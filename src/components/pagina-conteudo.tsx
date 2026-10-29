@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Check } from "lucide-react";
+import { Check, Plus } from "lucide-react";
 import { Assistente } from "./assistente";
 import { Efeitos } from "./efeitos";
 import { ChamadaFinal, Rodape } from "./final";
@@ -69,11 +69,13 @@ export function PaginaConteudo({
             <Titulo>Respostas diretas</Titulo>
             <div className="mt-10 grid gap-3">
               {perguntas.map((p) => (
-                <details key={p.pergunta} className="group rounded-2xl border border-line bg-card p-6 open:shadow-[0_20px_40px_-30px_rgba(8,30,20,0.4)]">
-                  <summary className="cursor-pointer list-none font-semibold text-ink marker:hidden">
+                <details key={p.pergunta} className="group rounded-2xl border border-line bg-card open:shadow-[0_20px_40px_-30px_rgba(8,30,20,0.4)]">
+                  {/* a área de clique é o cartão inteiro, não só a linha do texto */}
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-2xl p-6 font-semibold text-ink marker:hidden [&::-webkit-details-marker]:hidden">
                     {p.pergunta}
+                    <Plus className="size-5 shrink-0 text-brand transition-transform duration-300 group-open:rotate-45" aria-hidden />
                   </summary>
-                  <p className="mt-3 text-ink-soft">{p.resposta}</p>
+                  <p className="!mt-0 px-6 pb-6 text-ink-soft">{p.resposta}</p>
                 </details>
               ))}
             </div>

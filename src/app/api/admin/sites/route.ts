@@ -1,16 +1,17 @@
-import { semAcesso, semCache } from "@/lib/admin";
+import { semCache } from "@/lib/admin";
 import { adicionarSite, lerVerificacoes, listarSites, removerSite, verificarTodos } from "@/lib/monitor";
+import { adminAutorizado } from "@/lib/servidor";
 
 // Sites dos clientes em produção: listar, adicionar, remover e verificar agora.
 export async function GET(request: Request) {
-  const negado = semAcesso(request);
+  const negado = await adminAutorizado(request);
   if (negado) return negado;
   const [sites, verificacoes] = await Promise.all([listarSites(), lerVerificacoes()]);
   return Response.json({ ok: true, sites, verificacoes }, { headers: semCache });
 }
 
 export async function POST(request: Request) {
-  const negado = semAcesso(request);
+  const negado = await adminAutorizado(request);
   if (negado) return negado;
   const c = (await request.json().catch(() => ({}))) as { acao?: string; url?: string; nome?: string; plano?: string };
   try {

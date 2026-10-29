@@ -8,7 +8,7 @@ import { Header } from "@/components/header";
 export const metadata: Metadata = {
   title: "Análise grátis: como a IA enxerga o seu negócio",
   description:
-    "Descubra em 30 segundos se o ChatGPT, o Gemini e o Google com IA conseguem encontrar e recomendar o seu negócio, e o que corrigir no seu site.",
+    "Análise grátis em 30 segundos: um modelo de IA simula a pergunta que o seu cliente faria, eu confiro o seu site como os robôs de busca leem e você recebe uma nota de 0 a 100 com o que corrigir.",
   alternates: { canonical: "/analise-ia" },
 };
 
@@ -29,13 +29,13 @@ export default function PaginaAnaliseIA() {
               Como a IA enxerga o seu negócio? <span className="text-lime">Descubra agora.</span>
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-white/65">
-              Seu cliente pergunta ao ChatGPT, ao Gemini ou ao Google com IA qual lugar escolher. Eu faço essa pergunta por
-              você, leio o seu site como os robôs leem e te mostro uma nota de 0 a 100 com o que está impedindo a IA de
-              recomendar você.
+              Seu cliente pergunta ao ChatGPT, ao Gemini ou ao Google com IA qual lugar escolher. Aqui, um modelo de IA
+              simula essa pergunta, eu leio o seu site como os robôs de busca leem e te mostro uma nota de 0 a 100 com o que
+              pode estar impedindo as IAs de recomendar você.
             </p>
             <ul className="mt-8 grid gap-3 text-[15px] text-white/75">
               {[
-                "Teste real: a IA responde como se fosse o seu cliente",
+                "Simulação: um modelo de IA responde à pergunta que o seu cliente faria",
                 "Checagem do site: dados estruturados, robôs, HTTPS, texto",
                 "Lista do que corrigir, em português claro",
               ].map((t) => (

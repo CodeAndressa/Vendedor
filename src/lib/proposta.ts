@@ -20,6 +20,9 @@ export type Proposta = {
   maps?: { nome: string; nota?: number; avaliacoes?: number; endereco?: string; categoria?: string; url?: string; link?: string };
   previa?: string; // link de uma prévia real que você montou (senão usa o modelo com o nome do negócio)
   entregue?: string; // link do site entregue (usado na página de resultado)
+  // "admin": gerada no gerador do painel (com a ADMIN_CHAVE). Só essas podem ser pagas com projeto sob medida ("maior").
+  // Vai dentro do conteúdo assinado, então ninguém consegue acrescentar depois.
+  origem?: "admin";
 };
 
 const texto = (v: unknown, max: number) => (typeof v === "string" ? v.trim().slice(0, max) : "");
@@ -39,11 +42,20 @@ const numero = (v: unknown, max: number) => {
   return Number.isFinite(n) && n > 0 ? Math.min(n, max) : undefined;
 };
 
+// Data no fuso de Brasília (America/Sao_Paulo), em AAAA-MM-DD. No servidor da Vercel o relógio é UTC:
+// sem isso, depois das 21h a proposta sairia emitida "amanhã" e venceria um dia antes.
+const formatoSP = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Sao_Paulo", year: "numeric", month: "2-digit", day: "2-digit" });
+
 export function hoje(diasAFrente = 0) {
-  const d = new Date();
-  d.setDate(d.getDate() + diasAFrente);
-  return d.toISOString().slice(0, 10);
+  const [a, m, d] = formatoSP.format(new Date()).split("-").map(Number);
+  // meio-dia UTC evita qualquer efeito de horário de verão ao somar dias
+  const data = new Date(Date.UTC(a, m - 1, d + diasAFrente, 12));
+  return data.toISOString().slice(0, 10);
 }
+
+// Projeto sob medida (loja, sistema, 10+ páginas): só entra em pagamento se a proposta saiu do painel.
+export const temProjetoMaior = (p: Proposta) => p.extras.includes("maior");
+export const podeCobrarProjetoMaior = (p: Proposta) => !temProjetoMaior(p) || p.origem === "admin";
 
 // Limpa qualquer entrada (de formulário ou do link) para o formato de proposta.
 export function normalizar(dados: Record<string, unknown>): Proposta | null {
@@ -81,6 +93,7 @@ export function normalizar(dados: Record<string, unknown>): Proposta | null {
     maps,
     previa: url(dados.previa),
     entregue: url(dados.entregue),
+    origem: dados.origem === "admin" ? "admin" : undefined,
   };
 }
 

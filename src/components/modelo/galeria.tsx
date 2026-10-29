@@ -17,7 +17,7 @@ function Chip({ ativo, onClick, children }: { ativo: boolean; onClick: () => voi
       type="button"
       onClick={onClick}
       aria-pressed={ativo}
-      className={`min-h-10 rounded-full border px-4 text-sm font-medium whitespace-nowrap transition ${
+      className={`min-h-11 shrink-0 rounded-full border px-4 text-sm font-medium whitespace-nowrap transition sm:min-h-10 ${
         ativo ? "border-forest bg-forest text-white" : "border-line bg-card text-ink-soft hover:border-ink/40 hover:text-ink"
       }`}
     >
@@ -92,7 +92,7 @@ export function Galeria({ previas }: { previas: Record<string, ReactNode> }) {
               type="button"
               aria-pressed={estilo === e}
               onClick={() => setEstilo(estilo === e ? null : e)}
-              className={`rounded-full px-3 py-1 text-xs font-semibold whitespace-nowrap transition ${
+              className={`min-h-11 shrink-0 rounded-full px-3 py-1 text-xs font-semibold whitespace-nowrap transition sm:min-h-8 ${
                 estilo === e ? "bg-lime text-forest" : "bg-bg-alt text-ink-soft hover:text-ink"
               }`}
             >
@@ -100,7 +100,7 @@ export function Galeria({ previas }: { previas: Record<string, ReactNode> }) {
             </button>
           ))}
           {filtrando && (
-            <button type="button" onClick={limpar} className="ml-auto flex items-center gap-1 text-xs font-semibold whitespace-nowrap text-brand">
+            <button type="button" onClick={limpar} className="ml-auto flex min-h-11 shrink-0 items-center gap-1 px-1 text-xs font-semibold whitespace-nowrap text-brand-dark sm:min-h-8">
               <X className="size-3.5" /> Limpar filtros
             </button>
           )}
@@ -124,9 +124,9 @@ export function Galeria({ previas }: { previas: Record<string, ReactNode> }) {
               transition={{ duration: 0.3 }}
               className="group overflow-hidden rounded-3xl border border-line bg-card transition-shadow hover:shadow-[0_30px_60px_-36px_rgba(10,42,28,0.5)]"
             >
-              <Link href={`/modelos/${m.slug}`} className="relative block overflow-hidden border-b border-line">
+              <Link href={`/modelos/${m.slug}`} aria-label={`Ver ao vivo o modelo ${m.nome}`} className="relative block overflow-hidden border-b border-line">
                 <div className="transition duration-500 group-hover:scale-[1.03]">{previas[m.slug]}</div>
-                <span className="absolute top-3 left-3 rounded-full bg-black/75 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur">
+                <span className="absolute top-3 left-3 z-10 rounded-full bg-black/75 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur">
                   {m.tipo}
                 </span>
                 <span className="absolute inset-0 grid place-items-center bg-forest/0 opacity-0 transition group-hover:bg-forest/40 group-hover:opacity-100">
@@ -157,6 +157,7 @@ export function Galeria({ previas }: { previas: Record<string, ReactNode> }) {
                 <div className="mt-5 grid grid-cols-2 gap-2">
                   <Link
                     href={`/modelos/${m.slug}`}
+                    aria-label={`Ver ao vivo o modelo ${m.nome}`}
                     className="flex min-h-11 items-center justify-center rounded-full border-[1.5px] border-line text-sm font-semibold transition hover:border-ink"
                   >
                     Ver ao vivo
@@ -166,6 +167,7 @@ export function Galeria({ previas }: { previas: Record<string, ReactNode> }) {
                     target="_blank"
                     rel="noopener"
                     onClick={() => avisar(`Modelo ${m.nome} escolhido`, "Abrindo o WhatsApp…")}
+                    aria-label={`Quero o modelo ${m.nome}: falar no WhatsApp`}
                     className="flex min-h-11 items-center justify-center gap-1.5 rounded-full bg-brand text-sm font-semibold text-white transition hover:bg-brand-dark"
                   >
                     <WhatsAppIcon className="size-4" /> Quero este
@@ -181,7 +183,7 @@ export function Galeria({ previas }: { previas: Record<string, ReactNode> }) {
         <div className="mt-6 rounded-3xl border border-dashed border-line p-12 text-center">
           <p className="font-semibold">Nenhum modelo com esses filtros.</p>
           <p className="mt-1 text-ink-soft">Mas eu faço do zero para o seu segmento também.</p>
-          <button type="button" onClick={limpar} className="mt-4 text-sm font-semibold text-brand">
+          <button type="button" onClick={limpar} className="mt-4 min-h-11 px-2 text-sm font-semibold text-brand-dark">
             Ver todos os modelos
           </button>
         </div>

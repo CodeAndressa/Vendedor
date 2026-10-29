@@ -29,19 +29,21 @@ async function Conteudo({ searchParams }: { searchParams: PageProps<"/resultado"
   const codigo = typeof sp.p === "string" ? sp.p : "";
   const assinatura = typeof sp.a === "string" ? sp.a : "";
   const dados = codigo ? decodificar(codigo) : null;
-  if (!dados?.entregue) {
+  // Sem assinatura válida não mostra nada (nem links, nem comparativo, nem mede site): só pede o link original.
+  if (!dados?.entregue || !assinaturaConfere(codigo, assinatura)) {
     return (
       <main className="grid min-h-screen place-items-center px-5 text-center">
-        <div>
-          <h1 className="font-display text-3xl">Link incompleto</h1>
-          <Link href="/" className="mt-4 inline-block font-semibold text-brand">
-            Ir para o site
-          </Link>
+        <div className="max-w-lg">
+          <AlertTriangle className="mx-auto size-8 text-amber-600" />
+          <h1 className="mt-3 font-display text-3xl">Não consegui abrir este link</h1>
+          <p className="mt-3 text-ink-soft">O link está incompleto ou foi alterado. Peça o link original no WhatsApp.</p>
+          <a href={linkWhatsApp("Oi! Preciso do link original da página do meu site.")} target="_blank" rel="noopener" className="mt-6 inline-block font-semibold text-brand">
+            Pedir o link no WhatsApp
+          </a>
         </div>
       </main>
     );
   }
-  const verificada = assinaturaConfere(codigo, assinatura);
   const link = `${siteUrl}/resultado?p=${codigo}&a=${assinatura}`;
   const qr = await QRCode.toString(link, { type: "svg", margin: 1, color: { dark: "#0A2A1C", light: "#FFFFFF" } });
   const nome = dados.negocio || "seu negócio";
@@ -61,11 +63,6 @@ async function Conteudo({ searchParams }: { searchParams: PageProps<"/resultado"
         </div>
       </header>
       <div className="mx-auto max-w-4xl px-5">
-        {!verificada && (
-          <div className="mt-6 flex gap-3 rounded-2xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">
-            <AlertTriangle className="size-5 shrink-0" /> Este link foi alterado e não pôde ser confirmado.
-          </div>
-        )}
         <h1 className="pt-12 pb-8 font-display text-[clamp(2.2rem,6vw,3.6rem)] leading-[1.02] tracking-[-0.03em] text-balance">
           {primeiroNome ? `${primeiroNome}, ` : ""}o site da <span className="text-brand">{nome}</span> está no ar.
         </h1>

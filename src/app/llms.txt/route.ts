@@ -25,7 +25,7 @@ ${planosMensais.map((p) => `- ${p.nome}: ${reais(p.valor)}/mês. ${p.resumo}`).j
 ## Como funciona
 - Primeira versão em até ${prazos.primeiraVersao}; site no ar em até ${prazos.noAr}.
 - Inclui textos, design para celular, botão de WhatsApp, domínio .com.br e hospedagem do primeiro ano.
-- Garantia: se a primeira versão não agradar, o cliente não paga a segunda metade.
+- Garantia (no pagamento 50% + 50%): se a primeira versão não agradar, o cliente não paga a segunda metade.
 
 ## Páginas
 - [Início](${siteUrl}/)

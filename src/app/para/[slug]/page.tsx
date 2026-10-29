@@ -23,11 +23,20 @@ export async function generateMetadata({ params }: PageProps<"/para/[slug]">): P
   const n = nichoPorSlug(slug);
   if (!n) return {};
   const titulo = `Site para ${n.nome} em ${prazos.noAr} · a partir de ${reais(precos.site)}`;
+  const descricao = `${n.dor} Site profissional para ${n.singular}, no ar em até ${prazos.noAr}, com domínio incluso.`;
   return {
     title: titulo,
-    description: `${n.dor} Site profissional para ${n.singular}, no ar em até ${prazos.noAr}, com domínio incluso.`,
+    description: descricao,
     alternates: { canonical: `/para/${n.slug}` },
-    openGraph: { title: titulo },
+    // o openGraph da página substitui o do layout inteiro: repete imagem, tipo e idioma
+    openGraph: {
+      title: titulo,
+      description: descricao,
+      url: `/para/${n.slug}`,
+      type: "website",
+      locale: "pt_BR",
+      images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: titulo }],
+    },
   };
 }
 
@@ -68,7 +77,11 @@ export default async function PaginaNicho({ params }: PageProps<"/para/[slug]">)
             </ul>
           </div>
           {modelo && (
-            <Link href={`/modelos/${modelo.slug}`} className="group block overflow-hidden rounded-[28px] border border-line bg-card shadow-[0_30px_60px_-40px_rgba(10,42,28,0.5)]">
+            <Link
+              href={`/modelos/${modelo.slug}`}
+              aria-label={`Ver ao vivo o modelo ${modelo.nome}`}
+              className="group block overflow-hidden rounded-[28px] border border-line bg-card shadow-[0_30px_60px_-40px_rgba(10,42,28,0.5)]"
+            >
               <div className="transition duration-500 group-hover:scale-[1.02]">
                 <Miniatura>
                   <SiteModelo modelo={modelo} apenasHero />
@@ -105,7 +118,7 @@ export default async function PaginaNicho({ params }: PageProps<"/para/[slug]">)
               {reais(precos.site)} com até 5 páginas (ou landing page), textos, domínio e hospedagem do primeiro ano.
               Metade para começar, metade quando estiver no ar.
             </p>
-            <Link href="/#orcamento" className="mt-5 inline-block font-semibold text-brand">
+            <Link href="/#orcamento" className="mt-5 inline-flex min-h-11 items-center font-semibold text-brand-dark underline-offset-2 hover:underline">
               Ver planos e extras →
             </Link>
           </div>
@@ -125,7 +138,7 @@ export default async function PaginaNicho({ params }: PageProps<"/para/[slug]">)
             {nichos
               .filter((o) => o.slug !== n.slug)
               .map((o) => (
-                <Link key={o.slug} href={`/para/${o.slug}`} className="rounded-full border border-line bg-card px-4 py-2 text-sm hover:border-ink">
+                <Link key={o.slug} href={`/para/${o.slug}`} className="inline-flex min-h-11 items-center rounded-full border border-line bg-card px-4 text-sm hover:border-ink">
                   {o.nome}
                 </Link>
               ))}

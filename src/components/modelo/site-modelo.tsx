@@ -35,10 +35,10 @@ export function SiteModelo({ modelo, apenasHero = false }: { modelo: Modelo; ape
 
   return (
     <div style={estilo} className="@container bg-[var(--m-fundo)] font-sans text-[var(--m-texto)]">
-      {modelo.layout === "dividido" && <HeroDividido modelo={modelo} />}
-      {modelo.layout === "centro" && <HeroCentro modelo={modelo} />}
-      {modelo.layout === "cinema" && <HeroCinema modelo={modelo} />}
-      {modelo.layout === "lanchonete" && <HeroLanchonete modelo={modelo} />}
+      {modelo.layout === "dividido" && <HeroDividido modelo={modelo} miniatura={apenasHero} />}
+      {modelo.layout === "centro" && <HeroCentro modelo={modelo} miniatura={apenasHero} />}
+      {modelo.layout === "cinema" && <HeroCinema modelo={modelo} miniatura={apenasHero} />}
+      {modelo.layout === "lanchonete" && <HeroLanchonete modelo={modelo} miniatura={apenasHero} />}
       {!apenasHero && (
         <>
           {negocio.cardapio && <Cardapio secoes={negocio.cardapio} />}
@@ -56,11 +56,13 @@ export function SiteModelo({ modelo, apenasHero = false }: { modelo: Modelo; ape
   );
 }
 
-function Titulo({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+// Nas miniaturas (galeria, home, páginas de nicho) o título do modelo não pode ser um <h1>: a página já tem o seu.
+function Titulo({ children, className = "", miniatura = false }: { children: React.ReactNode; className?: string; miniatura?: boolean }) {
+  const Tag = miniatura ? "p" : "h1";
   return (
-    <h1 style={{ fontFamily: "var(--m-fonte)" }} className={`leading-[1.02] font-extrabold tracking-[-0.03em] text-balance ${className}`}>
+    <Tag style={{ fontFamily: "var(--m-fonte)" }} className={`leading-[1.02] font-extrabold tracking-[-0.03em] text-balance ${className}`}>
       {children}
-    </h1>
+    </Tag>
   );
 }
 
@@ -100,7 +102,7 @@ function Nav({ modelo }: { modelo: Modelo }) {
   );
 }
 
-function HeroDividido({ modelo }: { modelo: Modelo }) {
+function HeroDividido({ modelo, miniatura = false }: { modelo: Modelo; miniatura?: boolean }) {
   const { negocio } = modelo;
   const Grande = icones[negocio.icone];
   const S1 = icones[negocio.servicos[1].icone];
@@ -112,7 +114,7 @@ function HeroDividido({ modelo }: { modelo: Modelo }) {
           <span className="inline-flex items-center gap-2 rounded-full bg-[var(--m-suave)] px-4 py-1.5 text-sm font-medium">
             <Star className="size-4 fill-[var(--m-destaque)] text-[var(--m-destaque)]" /> {modelo.segmento}
           </span>
-          <Titulo className="mt-6 text-[clamp(2.6rem,5.5cqw,4.6rem)]">{negocio.chamada}</Titulo>
+          <Titulo miniatura={miniatura} className="mt-6 text-[clamp(2.6rem,5.5cqw,4.6rem)]">{negocio.chamada}</Titulo>
           <p className="mt-6 max-w-lg text-lg opacity-75">{negocio.subtitulo}</p>
           <div className="mt-9 flex flex-wrap gap-3">
             <BotaoModelo>{negocio.cta}</BotaoModelo>
@@ -146,14 +148,14 @@ function HeroDividido({ modelo }: { modelo: Modelo }) {
   );
 }
 
-function HeroCentro({ modelo }: { modelo: Modelo }) {
+function HeroCentro({ modelo, miniatura = false }: { modelo: Modelo; miniatura?: boolean }) {
   const { negocio } = modelo;
   return (
     <header className="min-h-[800px]">
       <Nav modelo={modelo} />
       <div className="mx-auto max-w-5xl px-6 pt-14 text-center">
         <span className="text-sm font-semibold tracking-[0.2em] uppercase opacity-60">{modelo.segmento}</span>
-        <Titulo className="mx-auto mt-5 max-w-4xl text-[clamp(2.8rem,6.5cqw,5.6rem)]">{negocio.chamada}</Titulo>
+        <Titulo miniatura={miniatura} className="mx-auto mt-5 max-w-4xl text-[clamp(2.8rem,6.5cqw,5.6rem)]">{negocio.chamada}</Titulo>
         <p className="mx-auto mt-6 max-w-xl text-lg opacity-75">{negocio.subtitulo}</p>
         <div className="mt-9 flex justify-center gap-3">
           <BotaoModelo>{negocio.cta}</BotaoModelo>
@@ -182,7 +184,7 @@ function HeroCentro({ modelo }: { modelo: Modelo }) {
   );
 }
 
-function HeroCinema({ modelo }: { modelo: Modelo }) {
+function HeroCinema({ modelo, miniatura = false }: { modelo: Modelo; miniatura?: boolean }) {
   const { negocio } = modelo;
   const Grande = icones[negocio.icone];
   return (
@@ -198,7 +200,7 @@ function HeroCinema({ modelo }: { modelo: Modelo }) {
           <span className="inline-flex items-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--m-texto)_20%,transparent)] px-4 py-1.5 text-sm">
             <span className="size-2 rounded-full bg-[var(--m-destaque)]" /> {modelo.segmento}
           </span>
-          <Titulo className="mt-6 max-w-4xl text-[clamp(3rem,8cqw,7rem)] uppercase">
+          <Titulo miniatura={miniatura} className="mt-6 max-w-4xl text-[clamp(3rem,8cqw,7rem)] uppercase">
             {negocio.chamada}
           </Titulo>
           <p className="mt-6 max-w-lg text-lg opacity-70">{negocio.subtitulo}</p>
@@ -331,7 +333,7 @@ function Hamburguer() {
   );
 }
 
-function HeroLanchonete({ modelo }: { modelo: Modelo }) {
+function HeroLanchonete({ modelo, miniatura = false }: { modelo: Modelo; miniatura?: boolean }) {
   const { negocio } = modelo;
   const aviso = [`Aberto hoje a partir das ${negocio.numeros[2][0]}`, "Delivery e salão", negocio.local?.avaliacao ?? "Feito na hora"];
   return (
@@ -351,7 +353,7 @@ function HeroLanchonete({ modelo }: { modelo: Modelo }) {
               <Star className="size-4 fill-current" /> {negocio.local.avaliacao}
             </span>
           )}
-          <Titulo className="mt-6 text-[clamp(3rem,8cqw,6.4rem)] leading-[0.92] uppercase">{negocio.chamada}</Titulo>
+          <Titulo miniatura={miniatura} className="mt-6 text-[clamp(3rem,8cqw,6.4rem)] leading-[0.92] uppercase">{negocio.chamada}</Titulo>
           <p className="mt-6 max-w-md text-lg opacity-75">{negocio.subtitulo}</p>
           <div className="mt-9 flex flex-wrap gap-3">
             <BotaoModelo>{negocio.cta}</BotaoModelo>

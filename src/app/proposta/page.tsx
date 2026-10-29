@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import Link from "next/link";
+import { connection } from "next/server";
 import { AlertTriangle, BadgeCheck, CalendarClock, Check, ShieldCheck, Smartphone } from "lucide-react";
 import QRCode from "qrcode";
 import { AcoesProposta, ContarVisualizacao } from "@/components/proposta/acoes";
@@ -8,9 +9,9 @@ import { Comparativo, ComparativoCarregando } from "@/components/proposta/compar
 import { Miniatura } from "@/components/modelo/miniatura";
 import { SiteModelo } from "@/components/modelo/site-modelo";
 import { bases, extras, metades, parcelaAssinatura, total } from "@/lib/catalogo";
-import { assinaturaSite, config, precos, reais, siteUrl } from "@/lib/config";
+import { assinaturaSite, config, linkWhatsApp, precos, reais, siteUrl } from "@/lib/config";
 import { modeloPorSlug } from "@/lib/modelos";
-import { decodificar, formatarData, hoje } from "@/lib/proposta";
+import { decodificar, formatarData, hoje, podeCobrarProjetoMaior, temProjetoMaior } from "@/lib/proposta";
 import { Logo } from "@/components/logo";
 import { assinaturaConfere } from "@/lib/servidor";
 
@@ -46,22 +47,30 @@ async function Conteudo({ searchParams }: { searchParams: PageProps<"/proposta">
   const assinatura = typeof sp.a === "string" ? sp.a : "";
   const proposta = codigo ? decodificar(codigo) : null;
 
-  if (!proposta) {
+  // Link sem assinatura válida (alterado ou incompleto): não mostra nada do conteúdo, nem valores,
+  // nem comparativo, nem mede site nenhum. Só pede o link original.
+  if (!proposta || !assinaturaConfere(codigo, assinatura)) {
     return (
       <main className="mx-auto grid min-h-screen max-w-lg place-items-center px-5 text-center">
         <div>
-          <h1 className="font-display text-3xl">Proposta não encontrada</h1>
-          <p className="mt-3 text-ink-soft">O link pode estar incompleto. Me chama no WhatsApp que eu te mando de novo.</p>
-          <Link href="/" className="mt-6 inline-block font-semibold text-brand">
-            Ir para o site
-          </Link>
+          <AlertTriangle className="mx-auto size-8 text-amber-600" />
+          <h1 className="mt-3 font-display text-3xl">Não consegui abrir esta proposta</h1>
+          <p className="mt-3 text-ink-soft">
+            O link está incompleto ou foi alterado. Peça o link original no WhatsApp que eu te mando de novo.
+          </p>
+          <a href={linkWhatsApp("Oi! Preciso do link original da minha proposta.")} target="_blank" rel="noopener" className="mt-6 inline-block font-semibold text-brand">
+            Pedir o link no WhatsApp
+          </a>
         </div>
       </main>
     );
   }
 
-  const verificada = assinaturaConfere(codigo, assinatura);
+  // a data de hoje (vencimento) é sempre a do momento do pedido, nunca a de um prerender
+  await connection();
+  const verificada = true;
   const vencida = proposta.validade < hoje();
+  const sobMedida = temProjetoMaior(proposta);
   const modelo = proposta.modelo ? modeloPorSlug(proposta.modelo) : undefined;
   const valorTotal = total(proposta.extras, proposta.desconto);
   const subtotal = total(proposta.extras);
@@ -83,14 +92,7 @@ async function Conteudo({ searchParams }: { searchParams: PageProps<"/proposta">
       </header>
 
       <div className="mx-auto max-w-4xl px-5">
-        {!verificada && (
-          <div className="mt-6 flex gap-3 rounded-2xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">
-            <AlertTriangle className="size-5 shrink-0" />
-            Este link foi alterado e não pôde ser confirmado. Os valores abaixo podem não ser os combinados. Peça o link
-            original no WhatsApp.
-          </div>
-        )}
-        {verificada && vencida && (
+        {vencida && (
           <div className="mt-6 flex gap-3 rounded-2xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">
             <CalendarClock className="size-5 shrink-0" />
             Esta proposta venceu em {formatarData(proposta.validade)}. Me chama no WhatsApp que eu confirmo se os valores
@@ -111,7 +113,8 @@ async function Conteudo({ searchParams }: { searchParams: PageProps<"/proposta">
           </div>
           <h1 className="mt-5 font-display text-[clamp(2.2rem,6vw,3.8rem)] leading-[1.02] tracking-[-0.03em] text-balance">
             {primeiroNome ? `${primeiroNome}, aqui está o plano para ` : "Aqui está o plano para "}
-            <span className="text-brand">{proposta.negocio || "o seu negócio"}</span> estar no ar em 7 dias.
+            <span className="text-brand">{proposta.negocio || "o seu negócio"}</span>
+            {sobMedida ? " estar no ar, com prazo combinado conforme o escopo." : " estar no ar em 7 dias."}
           </h1>
           {proposta.objetivo && (
             <p className="mt-5 max-w-2xl text-lg text-ink-soft">
@@ -209,12 +212,20 @@ async function Conteudo({ searchParams }: { searchParams: PageProps<"/proposta">
         <section className="mt-5 rounded-3xl border border-line bg-card p-7 print:break-inside-avoid">
           <h2 className="font-display text-2xl">Como vai ser</h2>
           <ol className="mt-6 grid gap-5 md:grid-cols-4">
-            {[
-              ["Dia 1", "Você aprova e paga a primeira metade. Eu recebo seus textos, fotos e logo."],
-              ["Até 48h", "Te mando o link da primeira versão para ver no celular."],
-              ["Dias 3 a 6", "Ajustes até ficar do seu jeito, domínio configurado."],
-              ["Até 7 dias", "Site no ar. Você paga a segunda metade."],
-            ].map(([quando, texto], i) => (
+            {(sobMedida
+              ? [
+                  ["Início", "Você aprova e paga a primeira metade. Fechamos juntos o escopo e o cronograma."],
+                  ["Primeira versão", "Te mando o link da primeira versão para ver no celular."],
+                  ["Ajustes", "Ajustes até ficar do seu jeito, domínio configurado."],
+                  ["Prazo combinado", "Projeto no ar no prazo combinado conforme o escopo. Você paga a segunda metade."],
+                ]
+              : [
+                  ["Dia 1", "Você aprova e paga a primeira metade. Eu recebo seus textos, fotos e logo."],
+                  ["Até 48h", "Te mando o link da primeira versão para ver no celular."],
+                  ["Dias 3 a 6", "Ajustes até ficar do seu jeito, domínio configurado."],
+                  ["Até 7 dias", "Site no ar. Você paga a segunda metade."],
+                ]
+            ).map(([quando, texto], i) => (
               <li key={quando}>
                 <span className="grid size-9 place-items-center rounded-full bg-forest font-display text-lime print:bg-brand-soft print:text-brand">
                   {i + 1}
@@ -247,7 +258,7 @@ async function Conteudo({ searchParams }: { searchParams: PageProps<"/proposta">
           link={link}
           p={codigo}
           a={assinatura}
-          podePagar={verificada && !vencida}
+          podePagar={verificada && !vencida && podeCobrarProjetoMaior(proposta)}
           cliente={proposta.cliente}
           negocio={proposta.negocio}
           total={reais(valorTotal)}
