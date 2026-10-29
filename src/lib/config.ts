@@ -4,6 +4,8 @@ export const config = {
   nome: "Andressa Soares",
   // Aparece no logo do topo. Se escolher uma marca, troque aqui.
   marca: "Andressa Soares",
+  // Texto da logo (minúsculo, com cursor dourado). O nome completo continua em "marca".
+  logo: "soares",
   // DDI + DDD + número, só dígitos.
   whatsapp: "5541984295040",
   whatsappVisivel: "(41) 98429-5040",

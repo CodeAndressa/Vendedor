@@ -29,6 +29,7 @@ ${planosMensais.map((p) => `- ${p.nome}: ${reais(p.valor)}/mês. ${p.resumo}`).j
 
 ## Páginas
 - [Início](${siteUrl}/)
+- [Análise grátis: como a IA enxerga o seu negócio](${siteUrl}/analise-ia)
 - [Modelos de site prontos](${siteUrl}/modelos)
 ${nichos.map((n) => `- [Site para ${n.nome}](${siteUrl}/para/${n.slug})`).join("\n")}
 

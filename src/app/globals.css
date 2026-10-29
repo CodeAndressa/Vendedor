@@ -88,3 +88,19 @@ h3 em {
     animation: none;
   }
 }
+
+/* cursor da logo */
+@keyframes piscar {
+  0%, 45% { opacity: 1; }
+  55%, 100% { opacity: 0; }
+}
+
+.cursor-piscando {
+  animation: piscar 1.1s steps(1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cursor-piscando {
+    animation: none;
+  }
+}

@@ -13,9 +13,9 @@ import {
   UserCheck,
   Zap,
 } from "lucide-react";
-import { Bot, Braces, MapPin, MessagesSquare, ScanSearch } from "lucide-react";
+import { Bot, Braces, Sparkles, MapPin, MessagesSquare, ScanSearch } from "lucide-react";
 import { Reveal } from "./reveal";
-import { Botao, Eyebrow, Titulo, WhatsAppIcon } from "./ui";
+import { Botao, Eyebrow, Titulo } from "./ui";
 
 export function Numeros() {
   const itens = [
@@ -284,13 +284,13 @@ export function BuscaIA() {
                   ))}
                 </ul>
                 <Botao
-                  mensagem="Oi! Quero a análise grátis: como a IA enxerga o meu negócio hoje?"
+                  href="/analise-ia"
                   variante="lima"
                   className="mt-9 w-full shadow-[0_0_0_1px_rgba(217,194,142,0.4),0_10px_40px_-8px_rgba(217,194,142,0.5)] sm:w-auto"
                 >
-                  <WhatsAppIcon /> Ver como a IA enxerga meu negócio
+                  <Sparkles className="size-5" /> Ver como a IA enxerga meu negócio
                 </Botao>
-                <p className="mt-3 text-xs text-white/50">Análise grátis: pergunto às IAs pelo seu serviço na sua cidade e te mostro o resultado.</p>
+                <p className="mt-3 text-xs text-white/50">Análise grátis em 30 segundos, com nota de 0 a 100 e o que corrigir.</p>
                 <p className="mt-6 border-t border-white/10 pt-5 text-xs leading-relaxed text-white/45">
                   Nenhuma IA vende lugar na resposta e ninguém pode garantir que você será citado. O que dá para fazer é tirar os
                   obstáculos e dar a ela informação clara e confiável sobre o seu negócio.
