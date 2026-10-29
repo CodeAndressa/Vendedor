@@ -1,6 +1,8 @@
 import { timingSafeEqual } from "node:crypto";
 import { verificarTodos } from "@/lib/monitor";
+import { avisarBuscadores } from "@/lib/indexnow";
 import { testarVisibilidade } from "@/lib/visibilidade";
+import sitemap from "@/app/sitemap";
 
 // Chamado todo dia pela Vercel (vercel.json). A Vercel manda "Authorization: Bearer CRON_SECRET".
 // Verifica os sites dos clientes todo dia e, às segundas, refaz o teste de visibilidade na IA.
@@ -21,6 +23,9 @@ export async function GET(request: Request) {
   if (new Date().getUTCDay() === 1) {
     await testarVisibilidade();
     feito.push("visibilidade");
+    // pede ao Bing e aos outros buscadores para relerem as páginas do site
+    const status = await avisarBuscadores(sitemap().map((p) => p.url)).catch(() => 0);
+    feito.push(`indexnow ${status}`);
   }
   return Response.json({ ok: true, feito });
 }
