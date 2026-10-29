@@ -22,7 +22,7 @@ export type Verificacao = {
 
 // Sites que já entram na lista (o seu e o da 4Core). Os outros você adiciona pelo painel.
 const iniciais: SiteCliente[] = [
-  { url: "https://soareslab.vercel.app", nome: "Soares Lab (meu site)" },
+  { url: "https://soareslab.com", nome: "Soares Lab (meu site)" },
   { url: "https://4core.site", nome: "4Core" },
 ];
 

@@ -8,7 +8,16 @@ import { nichos } from "@/lib/nichos";
 import { WhatsAppIcon } from "../ui";
 import { CampoChave, useChaveAdmin } from "./chave";
 
-type Resumo = { encontrados: number; fechados: number; comSite: number; oportunidades: number; chamadas: number };
+type Resumo = {
+  encontrados: number;
+  fechados: number;
+  comSite: number;
+  comTelefone?: number;
+  oportunidades: number;
+  chamadas: number;
+  fonte: "osm" | "google";
+  emCache?: boolean;
+};
 
 const CONTATADOS = "prospectos-contatados";
 const campo = "min-h-12 w-full rounded-xl border-2 border-line bg-card px-4 outline-none transition focus:border-brand";
@@ -161,11 +170,14 @@ export function Prospector() {
           className="inline-flex min-h-14 items-center justify-center gap-2 rounded-full bg-forest text-lg font-semibold text-white disabled:opacity-40"
         >
           {buscando ? <Loader2 className="size-5 animate-spin" /> : <Search className="size-5" />}
-          {buscando ? "Procurando no Google…" : "Encontrar empresas sem site"}
+          {buscando ? (resumo?.fonte === "osm" ? "Procurando no mapa (pode levar até meio minuto)…" : "Procurando…") : "Encontrar empresas sem site"}
         </button>
         <p className="text-xs text-ink-soft">
-          Cada bloco de 20 resultados é 1 consulta ao Google. As primeiras 1.000 consultas do mês são grátis; depois,
-          cerca de US$ 0,035 cada.
+          {!resumo
+            ? "Com a chave do Google Places a busca usa o Google (cada bloco de 20 resultados é 1 consulta; 1.000 grátis por mês). Sem ela, usa o OpenStreetMap, grátis."
+            : resumo.fonte === "osm"
+              ? "Busca grátis no OpenStreetMap (sem chave do Google). A base é menos completa: telefone e site às vezes faltam. A mesma busca fica guardada por algumas horas."
+              : "Cada bloco de 20 resultados é 1 consulta ao Google. As primeiras 1.000 consultas do mês são grátis; depois, cerca de US$ 0,035 cada."}
         </p>
         {erro && <p className="font-semibold text-red-700">{erro}</p>}
       </div>
@@ -176,7 +188,16 @@ export function Prospector() {
             <span className="rounded-full bg-forest px-3 py-1.5 font-semibold text-white">{resumo.oportunidades} oportunidades</span>
             <span className="rounded-full bg-bg-alt px-3 py-1.5">{resumo.encontrados} encontrados</span>
             <span className="rounded-full bg-bg-alt px-3 py-1.5">{resumo.comSite} já têm site</span>
-            <span className="rounded-full bg-bg-alt px-3 py-1.5">{resumo.fechados} fechados</span>
+            {resumo.fonte === "osm" ? (
+              <>
+                {resumo.comTelefone !== undefined && <span className="rounded-full bg-bg-alt px-3 py-1.5">{resumo.comTelefone} com telefone</span>}
+                <span className="text-xs text-ink-soft" title="Sem chave do Google Places: dados do OpenStreetMap, sem avaliações nem situação de funcionamento">
+                  Fonte: OpenStreetMap{resumo.emCache ? " (busca guardada)" : ""}
+                </span>
+              </>
+            ) : (
+              <span className="rounded-full bg-bg-alt px-3 py-1.5">{resumo.fechados} fechados</span>
+            )}
             <label className="ml-auto flex items-center gap-2">
               <input type="checkbox" checked={esconderContatados} onChange={(e) => setEsconderContatados(e.target.checked)} className="size-4 accent-[var(--color-brand)]" />
               Esconder já contatados
@@ -218,10 +239,10 @@ export function Prospector() {
                     </span>
                   </div>
                   <div className="mt-3 flex flex-wrap gap-1.5">
-                    <Selo ok={p.ativo}>Funcionando no Google</Selo>
+                    {resumo.fonte !== "osm" && <Selo ok={p.ativo}>Funcionando no Google</Selo>}
                     <Selo ok={p.dddConfere}>{p.dddConfere === null ? "Telefone sem conferência" : p.dddConfere ? "Telefone confere com a região" : "Telefone de outra região"}</Selo>
                     <Selo ok={p.celular}>{p.celular ? "WhatsApp provável" : "Telefone fixo"}</Selo>
-                    <Selo ok={p.avaliacoes >= 3}>{p.avaliacoes >= 3 ? "Clientes avaliando" : "Poucas avaliações"}</Selo>
+                    {resumo.fonte !== "osm" && <Selo ok={p.avaliacoes >= 3}>{p.avaliacoes >= 3 ? "Clientes avaliando" : "Poucas avaliações"}</Selo>}
                     <Selo ok={false}>{p.site === "sem-site" ? "Sem site" : p.site === "so-rede-social" ? "Só rede social" : "Tem site"}</Selo>
                   </div>
                 </div>

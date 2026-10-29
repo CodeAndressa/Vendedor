@@ -1,6 +1,7 @@
 import "server-only";
+import { buscarNoOSM } from "./osm";
 
-// Robô de prospecção: busca negócios no Google (Places API), descarta quem já tem site,
+// Robô de prospecção: busca negócios no Google (Places API) ou, sem chave, no OpenStreetMap; descarta quem já tem site,
 // confere se o negócio existe e se o telefone bate com a região, e ordena pelos mais promissores.
 
 const UF_POR_DDD: Record<string, string> = {};
@@ -55,6 +56,7 @@ type LugarGoogle = {
   userRatingCount?: number;
   businessStatus?: string;
   primaryTypeDisplayName?: { text?: string };
+  fonte?: "osm";
 };
 
 export function classificarSite(url?: string): SituacaoSite {
@@ -85,11 +87,13 @@ export function analisar(l: LugarGoogle): Prospecto {
   };
   if (site === "sem-site") somar(25, "Não tem site");
   if (site === "so-rede-social") somar(15, "Só tem rede social ou link de bio");
-  if (!local) somar(-35, "Sem telefone no Google");
+  if (!local) somar(-35, l.fonte === "osm" ? "Sem telefone no mapa" : "Sem telefone no Google");
   if (celular) somar(10, "Celular: provável WhatsApp");
   if (dddConfere === true) somar(8, `DDD ${ddd} confere com ${ufEndereco}`);
   if (dddConfere === false) somar(-15, `DDD ${ddd} é de ${ufTelefone}, endereço em ${ufEndereco}`);
-  if (avaliacoes >= 3) somar(Math.min(15, Math.round(Math.log10(avaliacoes + 1) * 6)));
+  // o OpenStreetMap não tem avaliações: nesse caso a nota não entra na conta
+  if (l.fonte === "osm") somar(0, "Do OpenStreetMap: confira no Google Maps se está aberto");
+  else if (avaliacoes >= 3) somar(Math.min(15, Math.round(Math.log10(avaliacoes + 1) * 6)));
   else somar(-20, "Poucas avaliações: pode estar parado");
   if ((l.rating ?? 0) >= 4.5 && avaliacoes >= 10) somar(5, "Clientes adoram: nota alta");
 
@@ -127,7 +131,27 @@ export async function buscarNegocios({ consulta, cidade, paginas, incluirComSite
   incluirComSite: boolean;
 }) {
   const chave = process.env.GOOGLE_PLACES_API_KEY;
-  if (!chave) throw new Error("Configure GOOGLE_PLACES_API_KEY na Vercel para o robô funcionar.");
+  if (!chave) {
+    // sem chave do Google: OpenStreetMap, grátis e sem cartão
+    // (com espelhos alternados, Nominatim de reserva e cache de algumas horas: ver osm.ts)
+    const { lugares, origem, emCache } = await buscarNoOSM(consulta, cidade, paginas * 20);
+    const todos = lugares.map(analisar);
+    const lista = todos.filter((p) => incluirComSite || p.site !== "tem-site").sort((a, b) => b.pontos - a.pontos);
+    return {
+      lista,
+      resumo: {
+        encontrados: todos.length,
+        fechados: 0,
+        comSite: todos.filter((p) => p.site === "tem-site").length,
+        comTelefone: todos.filter((p) => p.telefone).length,
+        oportunidades: lista.length,
+        chamadas: 0,
+        fonte: "osm" as const,
+        origem,
+        emCache,
+      },
+    };
+  }
   const base = process.env.GOOGLE_PLACES_URL ?? "https://places.googleapis.com/v1/places:searchText";
 
   const lugares: LugarGoogle[] = [];
@@ -162,8 +186,10 @@ export async function buscarNegocios({ consulta, cidade, paginas, incluirComSite
       encontrados: todos.length,
       fechados: todos.filter((p) => !p.ativo).length,
       comSite: todos.filter((p) => p.site === "tem-site").length,
+      comTelefone: todos.filter((p) => p.telefone).length,
       oportunidades: lista.length,
       chamadas,
+      fonte: "google" as const,
     },
   };
 }
