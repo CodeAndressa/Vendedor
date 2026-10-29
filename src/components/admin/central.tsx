@@ -233,8 +233,9 @@ export function Faturamento({ chave }: { chave: string }) {
         </button>
       </div>
       {dados.erro && <Erro texto={`Asaas: ${dados.erro}`} />}
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <Cartao titulo="Recebido no mês" valor={reais(dados.recebidoMes)} detalhe={variacao === null ? "primeiro mês com vendas" : `${variacao >= 0 ? "+" : ""}${variacao}% contra o mês passado`} destaque />
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
+        <Cartao titulo="Saldo no Asaas" valor={dados.saldo === null ? "—" : reais(dados.saldo)} detalhe="disponível para saque" destaque />
+        <Cartao titulo="Recebido no mês" valor={reais(dados.recebidoMes)} detalhe={variacao === null ? "primeiro mês com vendas" : `${variacao >= 0 ? "+" : ""}${variacao}% contra o mês passado`} />
         <Cartao titulo="Receita recorrente (MRR)" valor={reais(dados.mrr)} detalhe={`${dados.assinaturasAtivas} assinaturas ativas`} />
         <Cartao titulo="A receber" valor={reais(dados.aReceber)} detalhe="cobranças em aberto" />
         <Cartao titulo="Em atraso" valor={reais(dados.atrasado)} detalhe={`${dados.atrasadas.length} cobranças vencidas`} />
@@ -250,7 +251,6 @@ export function Faturamento({ chave }: { chave: string }) {
               </div>
             ))}
           </div>
-          {dados.saldo !== null && <p className="mt-4 text-sm text-ink-soft">Saldo disponível no Asaas: <strong className="text-ink">{reais(dados.saldo)}</strong></p>}
         </Bloco>
         <Bloco titulo={`Clientes ativos (${dados.clientesAtivos.length})`}>
           {dados.clientesAtivos.length ? (
