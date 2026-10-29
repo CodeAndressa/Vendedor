@@ -74,6 +74,7 @@ export function GeradorProposta() {
     link: q.get("mapsLink") ?? "",
   });
   const [link, setLink] = useState("");
+  const [curto, setCurto] = useState(""); // o que vai para o cliente (soareslab.com/p/...)
   const [erro, setErro] = useState("");
   const [copiado, setCopiado] = useState(false);
   const [enviando, setEnviando] = useState(false);
@@ -107,12 +108,15 @@ export function GeradorProposta() {
     }).catch(() => null);
     const json = r ? await r.json().catch(() => null) : null;
     setEnviando(false);
-    if (json?.ok) setLink(json.link);
+    if (json?.ok) {
+      setLink(json.link);
+      setCurto(json.curto ?? json.link);
+    }
     else setErro(json?.erro ?? "Não consegui gerar. Confira a conexão.");
   };
 
   const copiar = async () => {
-    await navigator.clipboard.writeText(link);
+    await navigator.clipboard.writeText(curto);
     setCopiado(true);
     setTimeout(() => setCopiado(false), 2000);
   };
@@ -120,8 +124,8 @@ export function GeradorProposta() {
   const saudacao = cliente ? `Oi, ${cliente.split(" ")[0]}!` : "Oi, tudo bem?";
   const mensagemCliente =
     pagina === "resultado"
-      ? `${saudacao} O site${negocio ? ` da ${negocio}` : ""} está no ar! Montei um antes e depois pra você ver. Abre no seu celular:\n\n${link}`
-      : `${saudacao} Montei uma prévia de como ficaria o site${negocio ? ` da ${negocio}` : ""}, lado a lado com como está hoje. Abre no seu celular, que é onde seus clientes vão ver:\n\n${link}`;
+      ? `${saudacao} O site${negocio ? ` da ${negocio}` : ""} está no ar! Montei um antes e depois pra você ver. Abre no seu celular:\n\n${curto}`
+      : `${saudacao} Montei uma prévia de como ficaria o site${negocio ? ` da ${negocio}` : ""}, lado a lado com como está hoje. Abre no seu celular, que é onde seus clientes vão ver:\n\n${curto}`;
   const numero = telefone.replace(/\D/g, "");
   const destino = numero ? `https://wa.me/${numero.length <= 11 ? `55${numero}` : numero}` : "https://wa.me/";
 
@@ -250,7 +254,7 @@ export function GeradorProposta() {
       {link && (
         <div className="grid gap-3 rounded-2xl border-2 border-brand bg-brand-soft p-5">
           <div className="text-sm font-semibold">Link pronto. Abra uma vez antes de mandar: assim a medição já fica pronta e o cliente vê na hora.</div>
-          <div className="truncate rounded-lg bg-card px-3 py-2 font-mono text-xs">{link}</div>
+          <div className="truncate rounded-lg bg-card px-3 py-2 font-mono text-xs">{curto}</div>
           <div className="grid gap-2 sm:grid-cols-3">
             <button type="button" onClick={copiar} className="flex min-h-11 items-center justify-center gap-2 rounded-full bg-card font-semibold">
               {copiado ? <Check className="size-4" /> : <Copy className="size-4" />} {copiado ? "Copiado" : "Copiar"}

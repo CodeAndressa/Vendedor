@@ -5,6 +5,7 @@ import { extras as catalogoExtras, type Extra } from "./catalogo";
 import { config } from "./config";
 import { modelos } from "./modelos";
 import { normalizar, type Proposta } from "./proposta";
+import { encurtar } from "./link-curto";
 import { linkProposta } from "./servidor";
 
 // Monta a proposta de um lead encontrado pelo robô de prospecção, com IA (Groq):
@@ -24,7 +25,8 @@ export type LeadRobo = {
 };
 
 export type PropostaPronta = {
-  link: string;
+  link: string; // link assinado completo (fica guardado no cartão)
+  curto: string; // o que vai na mensagem: soareslab.com/p/negocio-x7k2
   mensagem: string;
   whatsapp: string; // link wa.me com a mensagem
   modelo: string;
@@ -108,11 +110,13 @@ ${site ? `Conteúdo do site atual:\n${site}` : ""}`,
   }) as Proposta;
 
   const link = linkProposta(proposta);
+  const curto = await encurtar(link, lead.nome).catch(() => link);
   const base = limpar(resposta.mensagem, 600) ||
     `Oi, tudo bem? Sou a ${primeiroNome}, encontrei a ${lead.nome} e montei uma prévia de como ficaria o site de vocês. Segue o link, abre direto no celular:`;
-  const mensagem = `${base}\n\n${link}`;
+  const mensagem = `${base}\n\n${curto}`;
   return {
     link,
+    curto,
     mensagem,
     whatsapp: `https://wa.me/${lead.telefone}?text=${encodeURIComponent(mensagem)}`,
     modelo: modelo ?? "",

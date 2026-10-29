@@ -201,7 +201,7 @@ export function Kanban({ chave }: { chave: string }) {
               className={`flex w-72 shrink-0 flex-col rounded-3xl border p-2.5 transition ${sobre === col.id ? "border-brand bg-brand-soft/60" : "border-line bg-bg-alt/60"}`}
             >
               <CabecaColuna nome={col.nome} qtd={lista.length} id={col.id} />
-              <ul className="mt-2 grid min-h-24 content-start gap-2">
+              <ul className="mt-2 grid min-h-24 grid-cols-[minmax(0,1fr)] content-start gap-2">
                 {lista.map((c) => (
                   <li
                     key={c.id}
@@ -215,7 +215,7 @@ export function Kanban({ chave }: { chave: string }) {
                       setArrastando(null);
                       setSobre(null);
                     }}
-                    className={`cursor-grab active:cursor-grabbing ${arrastando === c.id ? "opacity-40" : ""}`}
+                    className={`min-w-0 cursor-grab active:cursor-grabbing ${arrastando === c.id ? "opacity-40" : ""}`}
                   >
                     <CartaoLead c={c} abrir={() => setAberto(c.id)} />
                   </li>
@@ -631,7 +631,7 @@ function PainelCartao({
             {/* notas */}
             <Caixa titulo={`Notas${c.notas?.length ? ` (${c.notas.length})` : ""}`}>
               {c.notas?.length ? (
-                <ul className="grid gap-2">
+                <ul className="grid grid-cols-[minmax(0,1fr)] gap-2">
                   {[...c.notas].reverse().map((n, i) => (
                     <li key={n.em + i} className="rounded-2xl bg-bg-alt p-3 text-sm">
                       <p className="whitespace-pre-wrap">{n.texto}</p>

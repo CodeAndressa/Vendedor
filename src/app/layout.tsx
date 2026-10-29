@@ -33,7 +33,8 @@ const grotesk = Space_Grotesk({
   weight: ["500", "700"],
 });
 
-const titulo = `Site profissional em 7 dias a partir de R$ 997 | ${config.marca}`;
+// Título da página inicial (aba do navegador e Google): marca primeiro, o que vende depois.
+const titulo = "soares.ai · Site profissional em 7 dias";
 const descricao =
   "Seu site ou landing page no ar em até 7 dias, a partir de R$ 997, com domínio .com.br incluso. Primeira versão em 48h e, no pagamento 50% + 50%, você só paga a segunda metade se gostar.";
 
@@ -42,7 +43,7 @@ export const metadata: Metadata = {
   description: descricao,
   metadataBase: new URL(siteUrl),
   openGraph: {
-    title: "Site profissional em 7 dias a partir de R$ 997",
+    title: titulo,
     description: descricao,
     type: "website",
     locale: "pt_BR",
