@@ -229,7 +229,7 @@ export function Seguranca() {
 const dadosIA = [
   { numero: "1 bi", texto: "de pessoas por mês já usam o Modo IA da busca do Google", fonte: "Google, 2º tri/2026" },
   { numero: "8%", texto: "clicam em algum link quando o Google mostra um resumo de IA (sem o resumo, são 15%)", fonte: "Pew Research, 2025 (EUA)" },
-  { numero: "6% → 45%", texto: "dos consumidores usam IA para achar negócios locais, em apenas um ano", fonte: "BrightLocal, 2026 (EUA)" },
+  { numero: "45%", texto: "dos consumidores já usam IA para achar negócios locais (um ano antes, eram 6%)", fonte: "BrightLocal, 2026 (EUA)" },
 ];
 
 export function BuscaIA() {

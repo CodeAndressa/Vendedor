@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Calculadora } from "@/components/calculadora";
-import { JsonLd, dadosFaq, dadosNegocio } from "@/components/json-ld";
+import { JsonLd, dadosFaq, dadosNegocio, dadosPessoa, dadosSite } from "@/components/json-ld";
 import { Diagnostico } from "@/components/diagnostico";
 import { Duvidas } from "@/components/faq";
 import { ChamadaFinal, ContatoFixo, Rodape } from "@/components/final";
@@ -33,6 +33,8 @@ export default function Home() {
     <>
       <JsonLd dados={dadosNegocio()} />
       <JsonLd dados={dadosFaq()} />
+      <JsonLd dados={dadosPessoa()} />
+      <JsonLd dados={dadosSite()} />
       <Abertura />
       <Efeitos />
       <Header escuro />

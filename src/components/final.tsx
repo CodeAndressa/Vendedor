@@ -46,6 +46,10 @@ const colunas = [
     links: [
       { href: "/modelos", label: "Modelos prontos" },
       { href: "/#diagnostico", label: "Diagnóstico grátis" },
+      { href: "/analise-ia", label: "Análise de IA grátis" },
+      { href: "/criacao-de-sites", label: "Criação de sites no Brasil" },
+      { href: "/criacao-de-sites-curitiba", label: "Sites em Curitiba" },
+      { href: "/como-aparecer-no-chatgpt", label: "Como aparecer no ChatGPT" },
       { href: "/#orcamento", label: "Planos e preços" },
       { href: "/#portfolio", label: "Portfólio" },
       { href: "/#duvidas", label: "Dúvidas" },

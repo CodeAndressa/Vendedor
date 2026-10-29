@@ -1,5 +1,5 @@
 import { asaasConfigurado, criarAssinatura, criarCobranca } from "@/lib/asaas";
-import { metades, parcelaAssinatura, planoMensal, total } from "@/lib/catalogo";
+import { bases, ehBase, ehExtra, extras, metades, parcelaAssinatura, planoMensal, total, type Extra } from "@/lib/catalogo";
 import { assinaturaSite } from "@/lib/config";
 import { documentoValido } from "@/lib/documento";
 import { decodificar, hoje } from "@/lib/proposta";
@@ -52,6 +52,30 @@ export async function POST(request: Request) {
       const descricao = `Entrada (50%) do site${proposta.negocio ? ` - ${proposta.negocio}` : ""}`;
       const url = await criarCobranca({ nome, documento, email, celular, referencia: `proposta:${assinatura}` }, entrada, descricao);
       await notificar({ tipo: "checkout", origem: "proposta", nome, negocio: proposta.negocio, valor: entrada, link: url });
+      return Response.json({ ok: true, url });
+    }
+
+    // Compra direta pela calculadora, sem proposta: o valor sai só dos itens do catálogo, sem desconto.
+    // Projetos maiores (loja, sistema) têm preço "a partir de" e passam por conversa antes.
+    if (c.tipo === "direto") {
+      const base = ehBase(c.base) ? c.base : "site";
+      const itens = Array.isArray(c.extras) ? [...new Set(c.extras.filter(ehExtra))] as Extra[] : [];
+      if (itens.includes("maior"))
+        return Response.json({ ok: false, erro: "Projetos maiores precisam de uma conversa antes. Me chama no WhatsApp." }, { status: 400 });
+      const valorTotal = total(itens);
+      const resumo = [bases[base].titulo, ...itens.map((i) => extras[i].titulo)].join(" + ");
+      const referencia = `direto:${Date.now().toString(36)}`;
+      if (c.forma === "parcelado") {
+        if (c.aceite !== true)
+          return Response.json({ ok: false, erro: "É preciso aceitar as condições do parcelamento." }, { status: 400 });
+        const parcela = parcelaAssinatura(valorTotal);
+        const url = await criarAssinatura({ nome, documento, email, celular, referencia }, parcela, `Site por assinatura (${assinaturaSite.parcelas}x): ${resumo}`, assinaturaSite.parcelas);
+        await notificar({ tipo: "checkout", origem: "calculadora-12x", nome, negocio: resumo, valor: parcela, parcelas: assinaturaSite.parcelas, link: url, whatsapp: celular });
+        return Response.json({ ok: true, url });
+      }
+      const [entrada] = metades(valorTotal);
+      const url = await criarCobranca({ nome, documento, email, celular, referencia }, entrada, `Entrada (50%): ${resumo}`);
+      await notificar({ tipo: "checkout", origem: "calculadora", nome, negocio: resumo, valor: entrada, link: url, whatsapp: celular });
       return Response.json({ ok: true, url });
     }
 

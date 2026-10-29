@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { animate, motion, useMotionValue, useReducedMotion, useTransform } from "motion/react";
-import { Bot, Check, LayoutTemplate, Newspaper, PanelsTopLeft, PenTool, ShoppingBag } from "lucide-react";
+import { Bot, CalendarClock, Check, LayoutTemplate, Lock, Newspaper, PanelsTopLeft, PenTool, ShoppingBag } from "lucide-react";
 import * as catalogo from "@/lib/catalogo";
 import { assinaturaSite, linkWhatsApp, precos, reais } from "@/lib/config";
 import { modelos } from "@/lib/modelos";
 import { useIlha } from "./ilha";
+import { Checkout } from "./checkout";
 import { Reveal } from "./reveal";
 import { Eyebrow, Titulo, WhatsAppIcon } from "./ui";
 
@@ -72,6 +73,7 @@ const somar = (lista: Extra[]) => precos.site + extras.filter((e) => lista.inclu
 export function Calculadora() {
   const [base, setBase] = useState<Base>("site");
   const [escolhidos, setEscolhidos] = useState<Extra[]>([]);
+  const [pagando, setPagando] = useState<"entrada" | "parcelado" | null>(null);
   const [modelo, setModelo] = useState("");
   const [nome, setNome] = useState("");
   const [negocio, setNegocio] = useState("");
@@ -318,18 +320,52 @@ export function Calculadora() {
                   ))}
                 </ul>
               </div>
+              {!escolhidos.includes("maior") ? (
+                <div className="relative mt-8 grid gap-2.5">
+                  <button
+                    type="button"
+                    data-magnetico
+                    onClick={() => setPagando("entrada")}
+                    className="brilho inline-flex min-h-14 items-center justify-center gap-2.5 rounded-full bg-lime px-6 text-base font-semibold text-forest transition hover:bg-[#E6D3A6]"
+                  >
+                    <Lock className="size-5" /> Contratar agora · entrada de {reais(entrada)}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPagando("parcelado")}
+                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-white/20 px-6 text-[15px] font-semibold text-white transition hover:border-white/60"
+                  >
+                    <CalendarClock className="size-4" /> Ou {assinaturaSite.parcelas}x de {reais(catalogo.parcelaAssinatura(total))} sem entrada
+                  </button>
+                </div>
+              ) : (
+                <p className="relative mt-8 text-sm text-white/60">Loja, login ou sistema têm escopo variável: me conta o projeto que eu te mando o valor exato.</p>
+              )}
               <a
                 href={linkWhatsApp(mensagem)}
                 target="_blank"
                 rel="noopener"
-                className="relative mt-8 inline-flex min-h-14 items-center justify-center gap-2.5 rounded-full bg-lime px-6 text-base font-semibold text-forest transition hover:-translate-y-0.5 hover:bg-white"
+                className="relative mt-2.5 inline-flex min-h-12 items-center justify-center gap-2.5 rounded-full px-6 text-[15px] font-semibold text-white/80 transition hover:text-white"
               >
-                <WhatsAppIcon /> Enviar orçamento no WhatsApp
+                <WhatsAppIcon className="size-4" /> Prefiro conversar antes no WhatsApp
               </a>
             </div>
           </div>
         </Reveal>
       </div>
+      <Checkout
+        aberto={pagando !== null}
+        fechar={() => setPagando(null)}
+        titulo={pagando === "parcelado" ? `${baseEscolhida.titulo} por assinatura · ${assinaturaSite.parcelas}x sem entrada` : `${baseEscolhida.titulo} · entrada de 50% para começar`}
+        valor={pagando === "parcelado" ? `${reais(catalogo.parcelaAssinatura(total))}/mês` : reais(entrada)}
+        dados={{ tipo: "direto", forma: pagando ?? "entrada", base, extras: escolhidos }}
+        aviso={
+          pagando === "parcelado"
+            ? `Li e concordo: são ${assinaturaSite.parcelas} parcelas mensais de ${reais(catalogo.parcelaAssinatura(total))}. ${catalogo.avisoAssinatura}`
+            : undefined
+        }
+        mensagemWhatsApp={mensagem}
+      />
     </section>
   );
 }

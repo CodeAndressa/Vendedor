@@ -12,6 +12,8 @@ export const config = {
   email: "",
   instagram: "",
   cidade: "Curitiba, PR",
+  // Perfis oficiais (LinkedIn, Instagram, GitHub, Perfil da Empresa no Google...). As IAs usam para confirmar quem você é.
+  perfis: [] as string[],
 };
 
 // Endereço público do site. Na Vercel, defina NEXT_PUBLIC_SITE_URL (ex.: https://andressasoares.com.br).

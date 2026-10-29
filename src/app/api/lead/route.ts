@@ -30,7 +30,13 @@ export async function POST(request: Request) {
     corpo.proposta && typeof corpo.proposta === "object"
       ? normalizar({ ...(corpo.proposta as Record<string, unknown>), cliente: nome, desconto: 0, observacao: "", previa: "", entregue: "" })
       : null;
-  const link = proposta ? linkProposta(proposta) : undefined;
+  // Sem PROPOSTA_SEGREDO o link não pode ser assinado: o lead é registrado mesmo assim, só sem a proposta.
+  let link: string | undefined;
+  try {
+    link = proposta ? linkProposta(proposta) : undefined;
+  } catch (e) {
+    console.error("Não consegui gerar o link da proposta", e);
+  }
 
   await notificar({
     tipo: "lead",

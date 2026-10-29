@@ -33,7 +33,7 @@ export function Hero() {
       <div className="relative mx-auto grid max-w-[1440px] items-center gap-14 px-5 pt-14 pb-20 md:px-10 md:pt-20 lg:grid-cols-[0.95fr_1.05fr] lg:gap-10 lg:pb-28 xl:px-16">
         <div>
           <motion.span {...anim(0)} className="inline-flex items-center gap-3 text-[11px] font-medium tracking-[0.22em] text-lime uppercase">
-            <span className="h-px w-8 bg-lime/60" /> Sites profissionais
+            <span className="h-px w-8 bg-lime/60" /> Sites profissionais · todo o Brasil
           </motion.span>
 
           <h1

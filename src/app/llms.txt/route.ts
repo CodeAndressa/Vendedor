@@ -30,6 +30,9 @@ ${planosMensais.map((p) => `- ${p.nome}: ${reais(p.valor)}/mês. ${p.resumo}`).j
 ## Páginas
 - [Início](${siteUrl}/)
 - [Análise grátis: como a IA enxerga o seu negócio](${siteUrl}/analise-ia)
+- [Criação de sites para todo o Brasil](${siteUrl}/criacao-de-sites)
+- [Criação de sites em Curitiba](${siteUrl}/criacao-de-sites-curitiba)
+- [Guia: como aparecer no ChatGPT e no Google com IA](${siteUrl}/como-aparecer-no-chatgpt)
 - [Modelos de site prontos](${siteUrl}/modelos)
 ${nichos.map((n) => `- [Site para ${n.nome}](${siteUrl}/para/${n.slug})`).join("\n")}
 
