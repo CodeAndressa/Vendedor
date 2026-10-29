@@ -1,0 +1,61 @@
+import type { Metadata } from "next";
+import { Bricolage_Grotesque, Fraunces, Inter, Space_Grotesk } from "next/font/google";
+import { IlhaProvider } from "@/components/ilha";
+import { Rastreamento } from "@/components/rastreamento";
+import { config, siteUrl } from "@/lib/config";
+import "./globals.css";
+
+// Mesma fonte do site da 4Core
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+});
+
+// Fontes extras usadas nos modelos de site
+const bricolage = Bricolage_Grotesque({
+  variable: "--font-bricolage",
+  subsets: ["latin"],
+  weight: ["600", "800"],
+});
+
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
+  subsets: ["latin"],
+  weight: ["600", "800"],
+});
+
+const grotesk = Space_Grotesk({
+  variable: "--font-grotesk",
+  subsets: ["latin"],
+  weight: ["500", "700"],
+});
+
+const titulo = `Site profissional em 7 dias a partir de R$ 997 | ${config.marca}`;
+const descricao =
+  "Seu site ou landing page no ar em até 7 dias, a partir de R$ 997, com domínio .com.br incluso. Primeira versão em 48h e você só paga a segunda metade se gostar.";
+
+export const metadata: Metadata = {
+  title: { default: titulo, template: `%s | ${config.marca}` },
+  description: descricao,
+  metadataBase: new URL(siteUrl),
+  openGraph: {
+    title: "Site profissional em 7 dias a partir de R$ 997",
+    description: descricao,
+    type: "website",
+    locale: "pt_BR",
+  },
+};
+
+export default function RootLayout({ children }: LayoutProps<"/">) {
+  return (
+    <html
+      lang="pt-BR"
+      className={`${inter.variable} ${bricolage.variable} ${fraunces.variable} ${grotesk.variable} antialiased`}
+    >
+      <body className="min-h-full font-sans">
+        <IlhaProvider>{children}</IlhaProvider>
+        <Rastreamento />
+      </body>
+    </html>
+  );
+}

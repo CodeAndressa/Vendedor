@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+@theme inline {
+  /* marfim, esmeralda e dourado: troque aqui para mudar a cara do site inteiro */
+  --color-bg: #F6F4EE;
+  --color-bg-alt: #EEEBE2;
+  --color-card: #FDFCF9;
+  --color-ink: #0D1511;
+  --color-ink-soft: #56615A;
+  --color-line: #E3DFD4;
+  --color-brand: #17784A;
+  --color-brand-dark: #0E5535;
+  --color-brand-soft: #E2EEE5;
+  /* "lime" virou o dourado de destaque; o nome ficou para não mexer em todos os componentes */
+  --color-lime: #D9C28E;
+  --color-forest: #0B1D15;
+  --color-forest-2: #12281E;
+  --color-wa: #25D366;
+
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-inter);
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 88px;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-feature-settings: "cv11", "ss03";
+}
+
+/* textura leve de papel por cima de tudo */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@media print {
+  body::after {
+    display: none;
+  }
+}
+
+/* títulos: Inter extrabold como no site da 4Core, sem itálico; palavras em <em> ganham a cor da marca */
+.font-display,
+.font-display em,
+h1 em,
+h2 em,
+h3 em {
+  font-weight: 800;
+  font-style: normal;
+}
+
+::selection {
+  background: var(--color-lime);
+  color: var(--color-forest);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee 40s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee {
+    animation: none;
+  }
+}
